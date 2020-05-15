@@ -1,23 +1,36 @@
-import kotlinx.html.Entities
-import kotlinx.html.Tag
-import kotlinx.html.TagConsumer
-import kotlinx.html.Unsafe
-import org.w3c.dom.HTMLElement
+package de.peekandpoke.mithrilkt
+
+import de.peekandpoke.jshelper.js
+import de.peekandpoke.mithrilkt.components.Component
+import de.peekandpoke.mithrilkt.components.Ctx
+import de.peekandpoke.mithrilkt.renderer.LowLevelComponent
+import kotlinx.html.*
 import org.w3c.dom.events.Event
 
-external object m {
-    fun render(element: HTMLElement, content: dynamic): dynamic
 
-    fun mount(element: HTMLElement, component: dynamic): dynamic
+class M(host: Component<*, *>? = null) : FlowContent {
 
-    fun redraw(): dynamic
+    fun render(builder: M.() -> Any?): dynamic {
+        builder()
+        return consumer.finalize().render()
+    }
+
+    override val consumer = MithrilTagConsumer(host)
+
+    override val attributes: MutableMap<String, String>
+        get() = mutableMapOf()
+
+    override val attributesEntries: Collection<Map.Entry<String, String>>
+        get() = emptyList()
+
+    override val emptyTag: Boolean = false
+
+    override val inlineTag: Boolean = false
+
+    override val namespace: String? = null
+
+    override val tagName: String = ""
 }
-
-external fun m(tag: String, content: dynamic): Any
-external fun m(tag: dynamic, attrs: dynamic, content: dynamic): Any
-
-val mithril: MithrilTagConsumer
-    get() = MithrilTagConsumer()
 
 interface MithrilElement {
     fun appendChild(child: MithrilElement) {}
@@ -47,53 +60,17 @@ data class MithrilContentElement(
     }
 }
 
-val symInstance = js("(Symbol('instance'))")
-
-val LowLevelComponent = mapOf(
-    "oninit" to { vnode: dynamic ->
-//        console.log("oninit", vnode)
-
-        if (!vnode.state[symInstance]) {
-            val instance = vnode.attrs.creator(vnode.attrs.props) as Component<*, *>
-            vnode.state[symInstance] = instance
-        }
-
-        vnode.state.state = vnode.state[symInstance].state
-
-//        console.log(vnode.state)
-    },
-
-    "oncreate" to { vnode: dynamic ->
-//        console.log("oncreate", vnode)
-    },
-
-    "onbeforeupdate" to { vnode: dynamic ->
-        val comp = vnode.state[symInstance] as Component<*, *>
-
-//        console.log("onbeforeupdate", comp, vnode.attrs.props)
-
-        comp.nextProps(vnode.attrs.props)
-    },
-
-    "view" to { vnode: dynamic ->
-//        console.log("VIEW VNODE", vnode)
-
-        val comp = vnode.state[symInstance] as Component<*, *>
-
-        comp.view().render()
-    }
-).js
 
 data class MithrilComponentElement<P>(
-    val props: P,
-    val component: (P) -> Component<P, *>
+    val ctx: Ctx<P>,
+    val component: (Ctx<P>) -> Component<P, *>
 ) : MithrilElement {
 
     override fun render(): dynamic {
         return m(
             LowLevelComponent,
             mapOf(
-                "props" to props,
+                "ctx" to ctx,
                 "creator" to component
             ).js,
             null
@@ -116,7 +93,7 @@ data class MithrilTagElement(
 
     override fun render(): dynamic {
 
-        // get the attrs at plain js object
+        // get the attrs at plain de.peekandpoke.jshelper.getJs object
         val attrs = tag.attributes.js
         // merge the events into the attributes
         events.forEach { (k, v) -> attrs[k] = v }
@@ -132,7 +109,7 @@ data class MithrilTagElement(
     }
 }
 
-class MithrilTagConsumer : TagConsumer<MithrilElement> {
+class MithrilTagConsumer(private val host: Component<*, *>? = null) : TagConsumer<MithrilElement> {
 
     private val root = MithrilRootElement()
 
@@ -140,11 +117,14 @@ class MithrilTagConsumer : TagConsumer<MithrilElement> {
         root
     )
 
-    fun <P, S> onComponent(params: P, component: (P) -> Component<P, S>) {
+    fun <P> onComponent(params: P, component: (Ctx<P>) -> Component<P, *>) {
 //        console.log(component)
 
         stack.last().appendChild(
-            MithrilComponentElement(params, component)
+            MithrilComponentElement(
+                Ctx(host, params),
+                component
+            )
         )
     }
 
