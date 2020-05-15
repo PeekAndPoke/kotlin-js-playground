@@ -9,11 +9,12 @@ external object m {
     fun render(element: HTMLElement, content: dynamic): dynamic
 
     fun mount(element: HTMLElement, component: dynamic): dynamic
+
+    fun redraw(): dynamic
 }
 
 external fun m(tag: String, content: dynamic): Any
 external fun m(tag: dynamic, attrs: dynamic, content: dynamic): Any
-
 
 val mithril: MithrilTagConsumer
     get() = MithrilTagConsumer()
@@ -46,13 +47,18 @@ data class MithrilContentElement(
     }
 }
 
+val symInstance = js("(Symbol('instance'))")
+
 val LowLevelComponent = mapOf(
     "oninit" to { vnode: dynamic ->
 //        console.log("oninit", vnode)
 
-        if (!vnode.state.instance) {
-            vnode.state.instance = vnode.attrs.creator()
+        if (!vnode.state[symInstance]) {
+            val instance = vnode.attrs.creator(vnode.attrs.props) as Component<*, *>
+            vnode.state[symInstance] = instance
         }
+
+        vnode.state.state = vnode.state[symInstance].state
 
 //        console.log(vnode.state)
     },
@@ -61,21 +67,33 @@ val LowLevelComponent = mapOf(
 //        console.log("oncreate", vnode)
     },
 
-    "view" to { vnode: dynamic ->
-//        console.log("VNODE", vnode)
+    "onbeforeupdate" to { vnode: dynamic ->
+        val comp = vnode.state[symInstance] as Component<*, *>
 
-        vnode.state.instance.view().render()
+//        console.log("onbeforeupdate", comp, vnode.attrs.props)
+
+        comp.nextProps(vnode.attrs.props)
+    },
+
+    "view" to { vnode: dynamic ->
+//        console.log("VIEW VNODE", vnode)
+
+        val comp = vnode.state[symInstance] as Component<*, *>
+
+        comp.view().render()
     }
 ).js
 
-data class MithrilComponentElement(
-    val component: () -> Component
+data class MithrilComponentElement<P>(
+    val props: P,
+    val component: (P) -> Component<P, *>
 ) : MithrilElement {
 
     override fun render(): dynamic {
         return m(
             LowLevelComponent,
             mapOf(
+                "props" to props,
                 "creator" to component
             ).js,
             null
@@ -122,11 +140,11 @@ class MithrilTagConsumer : TagConsumer<MithrilElement> {
         root
     )
 
-    fun onComponent(component: () -> Component) {
+    fun <P, S> onComponent(params: P, component: (P) -> Component<P, S>) {
 //        console.log(component)
 
         stack.last().appendChild(
-            MithrilComponentElement(component)
+            MithrilComponentElement(params, component)
         )
     }
 

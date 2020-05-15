@@ -1,43 +1,93 @@
 import kotlinx.html.*
 import kotlinx.html.js.onClickFunction
 import kotlin.browser.document
-import kotlin.browser.window
 
-interface IComponent {
-    fun view(): MithrilElement
+
+abstract class Component<PROPS, STATE>(initialProps: PROPS, initialState: STATE) {
+
+    private var _props: PROPS = initialProps
+    private var _state: STATE = initialState
+
+    val props: PROPS get() = _props
+    val state: STATE get() = _state
+
+    abstract fun view(): MithrilElement
+
+    fun nextProps(props: PROPS) {
+        _props = props
+    }
+
+    fun modState(mod: (STATE) -> STATE) {
+        _state = mod(_state)
+    }
 }
 
-abstract class Component : IComponent {
-}
+abstract class StaticComponent
+    : Component<Nothing?, Nothing?>(null, null)
 
-val Component.asMithril
-    get() = mapOf(
-        "view" to { vnode: dynamic ->
-            view().render()
+class RootComponent: StaticComponent() {
+    override fun view(): MithrilElement {
+        return mithril.div {
+            container()
         }
+    }
+}
+
+val StaticComponent.asMithrilRoot
+    get() = mapOf<String, Any>(
+        "key" to "root",
+        "view" to { view().render() }
     ).js
 
-class ContainerComponent : Component() {
+
+fun HTMLTag.container() = (this.consumer as MithrilTagConsumer).onComponent(
+    null
+) { ContainerComponent() }
+
+class ContainerComponent : Component<Nothing?, ContainerComponent.State>(null, State()) {
+
+    data class State(
+        val factor: Int = 1
+    )
 
     override fun view(): MithrilElement {
         return mithril.div {
             h1 { +"Container" }
 
-            repeat(1000) {
-                helloWorld()
+            button {
+                onClickFunction = { modState { it.copy(factor = it.factor + 1) } }
+                +"+"
+            }
+
+            pre {
+                +state.toString()
+            }
+
+            repeat(3) {
+                helloWorld((it + 1) * state.factor)
             }
         }
     }
 }
 
-fun HTMLTag.helloWorld() = (this.consumer as MithrilTagConsumer).onComponent {
-    HelloWorldComponent()
+fun <P, S> HTMLTag.comp(params: P, component: (P) -> Component<P, S>) =
+    (this.consumer as MithrilTagConsumer).onComponent(params, component)
+
+fun HTMLTag.helloWorld(factor: Int) = comp(HelloWorldComponent.Props(factor = factor)) {
+    HelloWorldComponent(it)
 }
 
+class HelloWorldComponent(props: Props) : Component<HelloWorldComponent.Props, HelloWorldComponent.State>(
+    props, State(counter = 0)
+) {
 
-class HelloWorldComponent : Component() {
+    data class Props(
+        val factor: Int
+    )
 
-    private var counter = 0
+    data class State(
+        val counter: Int
+    )
 
     override fun view(): MithrilElement {
 
@@ -47,16 +97,22 @@ class HelloWorldComponent : Component() {
                 +"Hello World Component !"
             }
 
-            div { +"Counter: $counter" }
+            div { +"Factor: ${props.factor}" }
+            div { +"Counter: ${state.counter}" }
+            div { +"Result: ${state.counter * props.factor}" }
 
             button {
-                onClickFunction = { counter++ }
+                onClickFunction = { modState { it.copy(counter = it.counter + 1) } }
                 +"+"
             }
             button {
-                onClickFunction = { counter-- }
+                onClickFunction = { modState { it.copy(counter = it.counter - 1) } }
                 +"-"
             }
+
+//            repeat(100)  {
+//                span { +"-" }
+//            }
         }
 
 //        console.log(tag)
@@ -73,39 +129,12 @@ fun main() {
 
     document.addEventListener("DOMContentLoaded", { event ->
 
-//        window.setInterval({
-//
-//            counter++
-//
-//            val tag = mithril.div {
-//                h1 {
-//                    style = "color: red;"
-//                    +"Hey $counter"
-//                }
-//
-//                a(href = "http://www.google.de") {
-//                    +"google"
-//                }
-//
-//                +"Hello World"
-//            }
-//
-//            console.log("TAG", tag)
-//
-//            val rendered = tag.render()
-//
-//            console.log("RENDERED", rendered)
-//
-//            m.render(document.body!!, rendered)
-//
-//        }, 2000)
-
-        val comp = ContainerComponent()
+        val comp = RootComponent()
 
 //        console.log("COMPONENT", comp.comp)
         console.log("COMPONENT", comp.view().render())
 
-        m.mount(document.body!!, comp.asMithril)
+        m.mount(document.body!!, comp.asMithrilRoot)
 
     })
 }
