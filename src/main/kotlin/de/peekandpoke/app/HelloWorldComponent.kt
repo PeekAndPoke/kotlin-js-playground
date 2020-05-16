@@ -1,11 +1,11 @@
 package de.peekandpoke.app
 
-import de.peekandpoke.mithrilkt.components.Component
-import de.peekandpoke.mithrilkt.components.Ctx
-import de.peekandpoke.mithrilkt.M
-import de.peekandpoke.mithrilkt.components.comp
+import de.peekandpoke.kraft.components.Component
+import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.comp
+import de.peekandpoke.kraft.components.onClick
+import de.peekandpoke.kraft.vdom.VDom
 import kotlinx.html.*
-import kotlinx.html.js.onClickFunction
 
 fun HTMLTag.helloWorld(factor: Int) = comp(HelloWorldComponent.Props(factor = factor)) {
     HelloWorldComponent(it)
@@ -27,7 +27,7 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
         console.log("onRemove", this)
     }
 
-    override fun M.render() {
+    override fun VDom.render() {
         div {
             h1 {
                 style = "color: red;"
@@ -39,11 +39,11 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
             div { +"Result: ${state.counter * props.factor}" }
 
             button {
-                onClickFunction = { modState { it.copy(counter = it.counter + 1) } }
+                onClick { modState { it.copy(counter = it.counter + 1) } }
                 +"+"
             }
             button {
-                onClickFunction = { modState { it.copy(counter = it.counter - 1) } }
+                onClick { modState { it.copy(counter = it.counter - 1) } }
                 +"-"
             }
         }

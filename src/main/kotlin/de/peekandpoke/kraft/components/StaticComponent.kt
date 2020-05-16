@@ -1,4 +1,4 @@
-package de.peekandpoke.mithrilkt.components
+package de.peekandpoke.kraft.components
 
 /**
  * A static component does not have any props or state

@@ -1,11 +1,11 @@
-package de.peekandpoke.mithrilkt.renderer
+package de.peekandpoke.kraft.vdom.mithril
 
 import de.peekandpoke.jshelper.js
-import de.peekandpoke.mithrilkt.components.Component
+import de.peekandpoke.kraft.components.Component
 
-val symInstance = js("(Symbol('instance'))")
+private val symInstance = js("(Symbol('instance'))")
 
-val LowLevelComponent = mapOf(
+val MithrilLowLevelComponent = mapOf(
     // Low level hook into Mithrils 'oninit' method.
     // See: https://mithril.js.org/lifecycle-methods.html#oninit
     "oninit" to { vnode: dynamic ->

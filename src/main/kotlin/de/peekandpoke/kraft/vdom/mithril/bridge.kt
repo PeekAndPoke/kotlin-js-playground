@@ -1,4 +1,4 @@
-package de.peekandpoke.mithrilkt
+package de.peekandpoke.kraft.vdom.mithril
 
 import org.w3c.dom.HTMLElement
 

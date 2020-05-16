@@ -1,11 +1,14 @@
 import de.peekandpoke.app.container
-import de.peekandpoke.mithrilkt.components.RootComponent
+import de.peekandpoke.kraft.vdom.mithril.MithrilVDomEngine
 import kotlin.browser.document
 
 fun main() {
 
     document.addEventListener("DOMContentLoaded", {
-        RootComponent { container() }.mountAt(document.body!!)
+
+        MithrilVDomEngine().mount(document.body!!) {
+            container()
+        }
     })
 }
 

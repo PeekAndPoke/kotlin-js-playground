@@ -1,11 +1,11 @@
-package de.peekandpoke.mithrilkt.components
+package de.peekandpoke.kraft.components
 
-import de.peekandpoke.mithrilkt.M
+import de.peekandpoke.kraft.vdom.VDom
 
 /**
  * Base class of all Components
  */
-abstract class Component<PROPS, STATE>(ctx: Ctx<PROPS>, initialState: STATE) {
+abstract class Component<PROPS, STATE>(private val ctx: Ctx<PROPS>, initialState: STATE) {
 
     private val parent: Component<*, *>? = ctx.parent
     private var _props: PROPS = ctx.props
@@ -17,7 +17,7 @@ abstract class Component<PROPS, STATE>(ctx: Ctx<PROPS>, initialState: STATE) {
     val props: PROPS get() = _props
     val state: STATE get() = _state
 
-    abstract fun M.render()
+    abstract fun VDom.render()
 
     open fun onRemove() {
     }
@@ -56,7 +56,7 @@ abstract class Component<PROPS, STATE>(ctx: Ctx<PROPS>, initialState: STATE) {
         needsRedraw = false
 
         @Suppress("UnsafeCastFromDynamic")
-        renderCache = M(this).render { render() }
+        renderCache = ctx.engine.render(this) { render() }
 
         return renderCache
     }

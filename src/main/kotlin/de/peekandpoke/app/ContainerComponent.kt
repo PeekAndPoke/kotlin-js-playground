@@ -1,11 +1,11 @@
 package de.peekandpoke.app
 
-import de.peekandpoke.mithrilkt.components.Component
-import de.peekandpoke.mithrilkt.components.Ctx
-import de.peekandpoke.mithrilkt.M
-import de.peekandpoke.mithrilkt.components.comp
+import de.peekandpoke.kraft.components.Component
+import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.comp
+import de.peekandpoke.kraft.components.onClick
+import de.peekandpoke.kraft.vdom.VDom
 import kotlinx.html.*
-import kotlinx.html.js.onClickFunction
 
 fun Tag.container() = comp { ContainerComponent(it) }
 
@@ -19,16 +19,17 @@ class ContainerComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, ContainerComp
         val numItems: Int = 3
     )
 
-    override fun M.render() {
+    override fun VDom.render() {
+
         div {
-            h1 { +"Container" }
+            h1 { +"Container Component" }
 
             h2 { +"Factor" }
-            button { +"+"; onClickFunction = { modState { it.copy(factor = it.factor + 1) } } }
+            button { +"+"; onClick { modState { it.copy(factor = it.factor + 1) } } }
 
             h2 { +"Num Items" }
-            button { +"+"; onClickFunction = { modState { it.copy(numItems = it.numItems + 1) } } }
-            button { +"-"; onClickFunction = { modState { it.copy(numItems = it.numItems - 1) } } }
+            button { +"+"; onClick { modState { it.copy(numItems = it.numItems + 1) } } }
+            button { +"-"; onClick { modState { it.copy(numItems = it.numItems - 1) } } }
 
             pre {
                 +state.toString()
