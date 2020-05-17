@@ -28,7 +28,7 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
     )
 
     override fun onRemove() {
-        console.log("onRemove", this)
+//        console.log("onRemove", this)
     }
 
     override fun VDom.render() {

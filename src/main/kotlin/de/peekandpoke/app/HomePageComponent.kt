@@ -8,13 +8,14 @@ import de.peekandpoke.kraft.vdom.custom
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.Tag
 
-fun Tag.remote() = comp { RemoteComponent(it) }
+@Suppress("FunctionName")
+fun Tag.HomePage() = comp { HomePageComponent(it) }
 
-class RemoteComponent(ctx: Ctx<Nothing?>): StaticComponent(ctx) {
+class HomePageComponent(ctx: Ctx<Nothing?>): StaticComponent(ctx) {
 
     override fun VDom.render() {
-        custom("remote") {
-            ui.header H1 { +"Remote" }
+        custom("home") {
+            ui.header H1 { +"Welcome" }
         }
     }
 }

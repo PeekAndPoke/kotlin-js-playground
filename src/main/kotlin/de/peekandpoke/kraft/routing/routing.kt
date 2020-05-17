@@ -1,7 +1,6 @@
 package de.peekandpoke.kraft.routing
 
 import de.peekandpoke.kraft.meiosis.Stream
-import kotlinx.html.FlowContent
 import org.w3c.dom.events.Event
 import kotlin.browser.window
 
@@ -14,6 +13,9 @@ interface Route {
     companion object {
         val default = StaticRoute("")
     }
+
+    fun String.replacePlaceholder(placeholder: String, value: String) =
+        replace("{$placeholder}", value)
 }
 
 data class StaticRoute(override val pattern: String) : Route {
@@ -24,28 +26,39 @@ data class StaticRoute(override val pattern: String) : Route {
     operator fun invoke() = "#$pattern"
 }
 
-fun routesToViews(builder: RoutesToViews.() -> Unit) = RoutesToViews().apply(builder)
+data class ParameterizedRoute1(override val pattern: String): Route {
 
-class RoutesToViews {
-    private val _mapping = mutableMapOf<Route, FlowContent.() -> Unit>()
-
-    val mapping get(): Map<Route, FlowContent.() -> Unit> = _mapping.toMap()
-
-    fun add(route: Route, view: FlowContent.() -> Unit) {
-        _mapping[route] = view
+    companion object {
+        val placeholderRegex = ":[a-zA-Z0-9]".toRegex()
     }
+
+    private val placeholders = "\\{([^}]*)}".toRegex()
+        .findAll(pattern)
+        .map { it.groupValues[1] }
+        // remove the special ... suffix on ktor routes
+        .map { it.removeSuffix("...") }
+        .toList()
+
+    override fun matches(uri: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    operator fun invoke(p1: String) = "#$pattern".replacePlaceholder(placeholders[0], p1)
 }
 
 class Router(private val routes: List<Route>) {
 
     private val prefix = "#"
-    private var route: Route = Route.default
 
-    val onChange = Stream(route)
+    val onChange = Stream<Route>(Route.default)
 
     init {
         window.addEventListener("DOMContentLoaded", ::windowListener)
         window.addEventListener("hashchange", ::windowListener)
+    }
+
+    fun navTo(uri: String) {
+        window.location.hash = uri
     }
 
     private fun windowListener(event: Event) {
@@ -56,9 +69,7 @@ class Router(private val routes: List<Route>) {
         val match = routes.firstOrNull { it.matches(location) }
 
         if (match != null) {
-            route = match
-
-            onChange.next(route)
+            onChange.next(match)
         }
     }
 }

@@ -9,9 +9,10 @@ import de.peekandpoke.kraft.vdom.custom
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.*
 
-fun Tag.counters() = comp { CountersComponent(it) }
+@Suppress("FunctionName")
+fun Tag.CountersPage() = comp { CountersPageComponent(it) }
 
-class CountersComponent(ctx: Ctx<Nothing?>): Component<Nothing?, CountersComponent.State>(ctx, State()) {
+class CountersPageComponent(ctx: Ctx<Nothing?>): Component<Nothing?, CountersPageComponent.State>(ctx, State()) {
 
     data class State(
         val factor: Int = 1,

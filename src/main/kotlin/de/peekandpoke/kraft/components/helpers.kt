@@ -4,7 +4,9 @@ import de.peekandpoke.kraft.vdom.VDomTagConsumer
 import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.Tag
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.MouseEvent
 
 /**
  * Adds a child component to the current tag
@@ -19,8 +21,17 @@ fun Tag.comp(component: (Ctx<Nothing?>) -> Component<Nothing?, *>) = comp(null, 
 
 
 /**
- * Easier to use onClick handler
+ * onClick handler
  */
-fun CommonAttributeGroupFacade.onClick(handler: (Event) -> Unit) {
-    onClickFunction = handler
+fun CommonAttributeGroupFacade.onClick(handler: (MouseEvent) -> Unit) {
+    @Suppress("UNCHECKED_CAST")
+    onClickFunction = handler as (Event) -> Unit
+}
+
+/**
+ * onSubmit handler
+ */
+fun CommonAttributeGroupFacade.onSubmit(handler: (Event) -> Unit) {
+    @Suppress("UNCHECKED_CAST")
+    onSubmitFunction = handler as (Event) -> Unit
 }
