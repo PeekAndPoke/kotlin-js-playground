@@ -1,43 +1,42 @@
 package de.peekandpoke.app
 
-import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.StaticComponent
 import de.peekandpoke.kraft.components.comp
-import de.peekandpoke.kraft.components.onClick
+import de.peekandpoke.kraft.routing.router
+import de.peekandpoke.kraft.routing.routesToViews
 import de.peekandpoke.kraft.vdom.VDom
-import kotlinx.html.*
+import de.peekandpoke.ultrajs.semanticui.ui
+import kotlinx.html.Tag
+import kotlinx.html.a
 
 fun Tag.container() = comp { ContainerComponent(it) }
 
-class ContainerComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, ContainerComponent.State>(
-    ctx,
-    State()
-) {
+class ContainerComponent(ctx: Ctx<Nothing?>) : StaticComponent(ctx) {
 
-    data class State(
-        val factor: Int = 1,
-        val numItems: Int = 3
-    )
+    private val routeMaps = routesToViews {
+        add(Nav.home) { home() }
+        add(Nav.counters) { counters() }
+        add(Nav.remote) { remote() }
+    }.mapping
 
     override fun VDom.render() {
 
-        div {
-            h1 { +"Container Component" }
+        ui.container {
 
-            h2 { +"Factor" }
-            button { +"+"; onClick { modState { it.copy(factor = it.factor + 1) } } }
-
-            h2 { +"Num Items" }
-            button { +"+"; onClick { modState { it.copy(numItems = it.numItems + 1) } } }
-            button { +"-"; onClick { modState { it.copy(numItems = it.numItems - 1) } } }
-
-            pre {
-                +state.toString()
+            ui.horizontal.list {
+                ui.item {
+                    a(href = Nav.home()) { +"Home" }
+                }
+                ui.item {
+                    a(href = Nav.counters()) { +"Counters" }
+                }
+                ui.item {
+                    a(href = Nav.remote()) { +"Remote" }
+                }
             }
 
-            repeat(state.numItems) {
-                helloWorld((it + 1) * state.factor)
-            }
+            router(router, routeMaps)
         }
     }
 }

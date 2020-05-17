@@ -5,7 +5,11 @@ import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
 import de.peekandpoke.kraft.vdom.VDom
-import kotlinx.html.*
+import de.peekandpoke.kraft.vdom.custom
+import de.peekandpoke.ultrajs.semanticui.ui
+import kotlinx.html.HTMLTag
+import kotlinx.html.button
+import kotlinx.html.h1
 
 fun HTMLTag.helloWorld(factor: Int) = comp(HelloWorldComponent.Props(factor = factor)) {
     HelloWorldComponent(it)
@@ -28,23 +32,30 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
     }
 
     override fun VDom.render() {
-        div {
+        custom("hello-world") {
+
             h1 {
-                style = "color: red;"
-                +"Hello World Component !"
+                +"Hello World Component!!!"
             }
 
-            div { +"Factor: ${props.factor}" }
-            div { +"Counter: ${state.counter}" }
-            div { +"Result: ${state.counter * props.factor}" }
-
-            button {
-                onClick { modState { it.copy(counter = it.counter + 1) } }
-                +"+"
-            }
-            button {
-                onClick { modState { it.copy(counter = it.counter - 1) } }
-                +"-"
+            ui.three.column.grid {
+                ui.row {
+                    ui.column { +"Factor: ${props.factor}" }
+                    ui.column { +"Counter: ${state.counter}" }
+                    ui.column { +"Result: ${state.counter * props.factor}" }
+                }
+                ui.row {
+                    ui.column {
+                        button {
+                            onClick { modState { it.copy(counter = it.counter + 1) } }
+                            +"+"
+                        }
+                        button {
+                            onClick { modState { it.copy(counter = it.counter - 1) } }
+                            +"-"
+                        }
+                    }
+                }
             }
         }
     }

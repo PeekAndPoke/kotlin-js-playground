@@ -5,6 +5,8 @@ import de.peekandpoke.kraft.components.Component
 
 private val symInstance = js("(Symbol('instance'))")
 
+private var componentCounter = 0
+
 val MithrilLowLevelComponent = mapOf(
     // Low level hook into Mithrils 'oninit' method.
     // See: https://mithril.js.org/lifecycle-methods.html#oninit
@@ -23,11 +25,13 @@ val MithrilLowLevelComponent = mapOf(
     // We use this on to propagate the next Ctx / Props to existing components
     // See: https://mithril.js.org/lifecycle-methods.html#onbeforeupdate
     "onbeforeupdate" to { vnode: dynamic ->
-        (vnode.state[symInstance] as Component<*, *>)._nextCtx(vnode.attrs.ctx)
+        true.run {
+            (vnode.state[symInstance] as Component<*, *>)._nextCtx(vnode.attrs.ctx)
+        }
     },
 
     "onremove" to { vnode: dynamic ->
-        (vnode.state[symInstance] as Component<*, *>).onRemove()
+        (vnode.state[symInstance] as Component<*, *>)._internalOnRemove()
     },
 
     // Bridging from Mithrils 'view' method to Component.render()
