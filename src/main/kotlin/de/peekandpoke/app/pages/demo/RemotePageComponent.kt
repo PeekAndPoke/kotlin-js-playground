@@ -1,8 +1,8 @@
-package de.peekandpoke.app
+package de.peekandpoke.app.pages.demo
 
-import de.peekandpoke.app.api.ApiQueries
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.app.Api
+import de.peekandpoke.kraft.components.NoProps
+import de.peekandpoke.kraft.components.PureComponent
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
 import de.peekandpoke.kraft.vdom.VDom
@@ -19,13 +19,9 @@ import kotlinx.html.pre
 @Suppress("FunctionName")
 fun Tag.RemotePage() = comp { RemotePageComponent(it) }
 
-class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageComponent.State>(ctx) {
+class RemotePageComponent(ctx: NoProps) : PureComponent(ctx) {
 
-    inner class State {
-        var response by property<Any?>(null)
-    }
-
-    override val state = State()
+    private var response by property<Any?>(null)
 
     override fun VDom.render() {
         custom("remote") {
@@ -36,8 +32,8 @@ class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageCo
                 onClick { loadAppInfo() }
             }
 
-            if (state.response != null) {
-                pre { +JSON.stringify(state.response, null, 2) }
+            if (response != null) {
+                pre { +JSON.stringify(response, null, 2) }
             }
         }
     }
@@ -47,7 +43,7 @@ class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageCo
 
             Api.login.login("karsten@jointhebase.co", "joinmenow")
                 .onEach { console.log(it) }
-                .collect { state.response = JSON.stringify(it) }
+                .collect { response = JSON.stringify(it) }
         }
     }
 }

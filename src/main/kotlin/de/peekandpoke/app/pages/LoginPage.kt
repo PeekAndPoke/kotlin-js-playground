@@ -8,8 +8,8 @@ import de.peekandpoke.app.forms.TextField
 import de.peekandpoke.app.forms.validation.NotBlank
 import de.peekandpoke.app.forms.validation.NotEmpty
 import de.peekandpoke.app.router
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.NoProps
+import de.peekandpoke.kraft.components.PureComponent
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
 import de.peekandpoke.kraft.vdom.VDom
@@ -25,29 +25,14 @@ import kotlinx.html.style
 fun Tag.LoginPage() = comp { LoginPage(it) }
 
 
-class LoginPage(ctx: Ctx<Nothing?>) : Component<Nothing?, LoginPage.State>(ctx) {
+class LoginPage(ctx: NoProps) : PureComponent(ctx) {
 
-    inner class State {
-        var user by property("")
-        var password by property("")
-    }
+    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override val state = State()
+    private var user by property("")
+    private var password by property("")
 
-    private fun login() {
-
-        GlobalScope.launch {
-            Api.login.login(state.user, state.password).collect { result ->
-                // Set the user in the AppState
-                AppState.UserActions.set(result.data!!.user)
-                // Set the auth token in the AppState
-                AppState.AuthTokenActions.set(result.data.token)
-
-                // Navigate to the homepage
-                router.navTo(Nav.home())
-            }
-        }
-    }
+    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
         ui.container {
@@ -63,14 +48,14 @@ class LoginPage(ctx: Ctx<Nothing?>) : Component<Nothing?, LoginPage.State>(ctx) 
 
                             ui.field {
                                 label { attributes["for"] = "user"; +"User" }
-                                TextField(state::user) {
+                                TextField(::user) {
                                     accepts(NotEmpty, NotBlank)
                                 }
                             }
 
                             ui.field {
                                 label { attributes["for"] = "password"; +"Password" }
-                                PasswordField(state::password)
+                                PasswordField(::password)
                             }
 
                             ui.wide.button Submit {
@@ -83,6 +68,20 @@ class LoginPage(ctx: Ctx<Nothing?>) : Component<Nothing?, LoginPage.State>(ctx) 
                 }
             }
         }
+    }
 
+    private fun login() {
+
+        GlobalScope.launch {
+            Api.login.login(user, password).collect { result ->
+                // Set the user in the AppState
+                AppState.UserActions.set(result.data!!.user)
+                // Set the auth token in the AppState
+                AppState.AuthTokenActions.set(result.data.token)
+
+                // Navigate to the homepage
+                router.navTo(Nav.home())
+            }
+        }
     }
 }

@@ -6,5 +6,5 @@ import kotlinx.html.TagConsumer
 
 interface VDomTagConsumer: TagConsumer<VDomElement> {
 
-    fun <P> onComponent(params: P, component: (Ctx<P>) -> Component<P, *>)
+    fun <P> onComponent(params: P, component: (Ctx<P>) -> Component<P>)
 }

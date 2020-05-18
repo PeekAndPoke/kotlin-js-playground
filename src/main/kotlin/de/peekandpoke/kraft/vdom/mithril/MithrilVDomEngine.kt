@@ -18,7 +18,7 @@ class MithrilVDomEngine : VDomEngine {
         m.mount(element, lowLevelRoot)
     }
 
-    override fun createTagConsumer(host: Component<*, *>?): VDomTagConsumer = MithrilTagConsumer(this, host)
+    override fun createTagConsumer(host: Component<*>?): VDomTagConsumer = MithrilTagConsumer(this, host)
 
     override fun triggerRedraw() {
         m.redraw()

@@ -4,7 +4,9 @@ import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.vdom.VDomElement
 import de.peekandpoke.kraft.vdom.VDomTagConsumer
-import kotlinx.html.*
+import kotlinx.html.Entities
+import kotlinx.html.Tag
+import kotlinx.html.Unsafe
 import org.w3c.dom.events.Event
 
 /**
@@ -14,7 +16,7 @@ import org.w3c.dom.events.Event
  */
 class MithrilTagConsumer(
     private val engine: MithrilVDomEngine,
-    private val host: Component<*, *>?
+    private val host: Component<*>?
 ) : VDomTagConsumer {
 
     /** The root element */
@@ -25,7 +27,7 @@ class MithrilTagConsumer(
         root
     )
 
-    override fun <P> onComponent(params: P, component: (Ctx<P>) -> Component<P, *>) {
+    override fun <P> onComponent(params: P, component: (Ctx<P>) -> Component<P>) {
 //        console.log(component)
 
         stack.last().appendChild(

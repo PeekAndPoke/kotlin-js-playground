@@ -11,9 +11,9 @@ import kotlin.reflect.KProperty
 /**
  * Base class of all Components
  */
-abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>) {
+abstract class Component<PROPS>(val ctx: Ctx<PROPS>) {
 
-    private val parent: Component<*, *>? = ctx.parent
+    private val parent: Component<*>? = ctx.parent
     private var _props: PROPS = ctx.props
 
     private var needsRedraw = true
@@ -24,8 +24,6 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>) {
     val props: PROPS get() = _props
 
     var dom: Element? = null
-
-    abstract val state: STATE
 
     abstract fun VDom.render()
 
@@ -53,6 +51,11 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>) {
         }
     }
 
+    /**
+     * Subscribes to the stream and publishes the streams value.
+     *
+     * When the stream publishes a new value a redraw is triggered
+     */
     protected fun <T> stream(stream: Stream<T>): ReadOnlyProperty<Any?, T> {
 
         stream { triggerRedraw() }
@@ -64,10 +67,12 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>) {
         }
     }
 
+    /**
+     * Creates a read write property for the components state
+     */
     protected fun <T> property(initial: T): ReadWriteProperty<Any?, T> =
         object : ObservableProperty<T>(initial) {
             override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-                console.log(property, oldValue, newValue)
                 triggerRedraw()
             }
         }

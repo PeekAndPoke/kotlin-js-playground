@@ -7,7 +7,7 @@ import de.peekandpoke.kraft.vdom.VDomElement
 
 data class MithrilComponentElement<P>(
     val ctx: Ctx<P>,
-    val component: (Ctx<P>) -> Component<P, *>
+    val component: (Ctx<P>) -> Component<P>
 ) : VDomElement {
 
     override fun render(): dynamic {

@@ -1,4 +1,4 @@
-package de.peekandpoke.app
+package de.peekandpoke.app.pages.demo
 
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
@@ -11,25 +11,21 @@ import kotlinx.html.HTMLTag
 import kotlinx.html.button
 import kotlinx.html.h1
 
-fun HTMLTag.helloWorld(factor: Int) = comp(HelloWorldComponent.Props(factor = factor)) {
+fun HTMLTag.helloWorld(factor: Int) = comp(
+    HelloWorldComponent.Props(
+        factor = factor
+    )
+) {
     HelloWorldComponent(it)
 }
 
-class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props, HelloWorldComponent.State>(ctx) {
+class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props>(ctx) {
 
     data class Props(
         val factor: Int
     )
 
-    inner class State {
-        var counter by property(0)
-    }
-
-    override val state = State()
-
-    override fun onRemove() {
-//        console.log("onRemove", this)
-    }
+    private var counter by property(0)
 
     override fun VDom.render() {
         custom("hello-world") {
@@ -41,18 +37,18 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
             ui.three.column.grid {
                 ui.row {
                     ui.column { +"Factor: ${props.factor}" }
-                    ui.column { +"Counter: ${state.counter}" }
-                    ui.column { +"Result: ${state.counter * props.factor}" }
+                    ui.column { +"Counter: ${counter}" }
+                    ui.column { +"Result: ${counter * props.factor}" }
                 }
                 ui.row {
                     ui.column {
                         button {
                             +"+"
-                            onClick { state.counter++ }
+                            onClick { counter++ }
                         }
                         button {
                             +"-"
-                            onClick { state.counter-- }
+                            onClick { counter-- }
                         }
                     }
                 }

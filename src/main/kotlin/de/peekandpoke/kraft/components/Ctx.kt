@@ -6,7 +6,7 @@ typealias NoProps = Ctx<Nothing?>
 
 data class Ctx<PROPS>(
     val engine: VDomEngine,
-    val parent: Component<*, *>?,
+    val parent: Component<*>?,
     val props: PROPS
 ) {
     companion object {

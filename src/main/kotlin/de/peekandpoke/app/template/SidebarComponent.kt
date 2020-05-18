@@ -3,8 +3,8 @@ package de.peekandpoke.app.template
 import de.peekandpoke.app.AppState
 import de.peekandpoke.app.Nav
 import de.peekandpoke.app.router
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.NoProps
+import de.peekandpoke.kraft.components.PureComponent
 import de.peekandpoke.kraft.components.RenderFn
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.vdom.VDom
@@ -17,14 +17,14 @@ import kotlinx.html.div
 @Suppress("FunctionName")
 fun Tag.Sidebar() = comp { SidebarComponent(it) }
 
-class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponent.State>(ctx) {
+class SidebarComponent(ctx: NoProps) : PureComponent(ctx) {
 
-    inner class State {
-        val user by stream(AppState.user)
-        val matchedRoute by stream(router.current)
-    }
+    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override val state = State()
+    private val user by stream(AppState.user)
+    private val matchedRoute by stream(router.current)
+
+    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
 
@@ -36,13 +36,13 @@ class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponen
 
             ui.item {
                 icon.user()
-                +(state.user?.id ?: "")
+                +(user?.name ?: "")
             }
 
             ui.accordion {
 
                 MenuItem(
-                    state = state.matchedRoute.pattern,
+                    state = matchedRoute.pattern,
                     title = {
                         div {
                             icon.user()
@@ -50,7 +50,7 @@ class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponen
                         }
                     },
                     items = listOf<RenderFn> {
-                        ui.item.given(state.matchedRoute.route == Nav.adminUsersList) { active } A {
+                        ui.item.given(matchedRoute.route == Nav.adminUsersList) { active } A {
                             href = Nav.adminUsersList()
                             +"List"
                         }
@@ -59,7 +59,7 @@ class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponen
 
 
                 MenuItem(
-                    state = state.matchedRoute.pattern,
+                    state = matchedRoute.pattern,
                     title = {
                         div {
                             icon.building_outline()
@@ -68,27 +68,27 @@ class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponen
                     },
                     items = listOf<RenderFn>(
                         {
-                            ui.item.given(state.matchedRoute.route == Nav.home) { active } A {
+                            ui.item.given(matchedRoute.route == Nav.home) { active } A {
                                 href = Nav.home()
                                 +"Home"
                             }
                         }, {
-                            ui.item.given(state.matchedRoute.route == Nav.counters) { active } A {
+                            ui.item.given(matchedRoute.route == Nav.counters) { active } A {
                                 href = Nav.counters()
                                 +"Counters"
                             }
                         }, {
-                            ui.item.given(state.matchedRoute.route == Nav.remote) { active } A {
+                            ui.item.given(matchedRoute.route == Nav.remote) { active } A {
                                 href = Nav.remote()
                                 +"Remote"
                             }
                         }, {
-                            ui.item.given(state.matchedRoute.route == Nav.orgs) { active } A {
+                            ui.item.given(matchedRoute.route == Nav.orgs) { active } A {
                                 href = Nav.orgs("1")
                                 +"Orgs 1"
                             }
                         }, {
-                            ui.item.given(state.matchedRoute.route == Nav.orgs) { active } A {
+                            ui.item.given(matchedRoute.route == Nav.orgs) { active } A {
                                 href = Nav.orgs("2")
                                 +"Orgs 2"
                             }

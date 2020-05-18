@@ -7,11 +7,11 @@ interface VDomEngine {
 
     fun mount(element: HTMLElement, view: VDom.() -> Any?)
 
-    fun createTagConsumer(host: Component<*, *>?): VDomTagConsumer
+    fun createTagConsumer(host: Component<*>?): VDomTagConsumer
 
     fun triggerRedraw()
 
-    fun render(host: Component<*, *>? = null, builder: VDom.() -> Any?): dynamic {
+    fun render(host: Component<*>? = null, builder: VDom.() -> Any?): dynamic {
         return VDom(this, host).render { builder() }
     }
 }

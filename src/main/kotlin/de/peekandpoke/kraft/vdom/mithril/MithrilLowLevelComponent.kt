@@ -2,11 +2,8 @@ package de.peekandpoke.kraft.vdom.mithril
 
 import de.peekandpoke.jshelper.js
 import de.peekandpoke.kraft.components.Component
-import kotlinx.html.ObjectName
 
 private val symInstance = js("(Symbol('instance'))")
-
-private var componentCounter = 0
 
 val MithrilLowLevelComponent = mapOf(
     // Low level hook into Mithrils 'oninit' method.
@@ -15,12 +12,9 @@ val MithrilLowLevelComponent = mapOf(
 //        console.log("oninit", vnode)
 
         if (!vnode.state[symInstance]) {
-            val instance = vnode.attrs.creator(vnode.attrs.ctx) as Component<*, *>
+            val instance = vnode.attrs.creator(vnode.attrs.ctx) as Component<*>
             vnode.state[symInstance] = instance
         }
-
-
-        vnode.state.state = vnode.state[symInstance].state
     },
 
     // Low level hook into Mithrils 'oncreate' method.
@@ -38,16 +32,16 @@ val MithrilLowLevelComponent = mapOf(
         vnode.state.state = vnode.state[symInstance].state
 
         true.run {
-            (vnode.state[symInstance] as Component<*, *>)._nextCtx(vnode.attrs.ctx)
+            (vnode.state[symInstance] as Component<*>)._nextCtx(vnode.attrs.ctx)
         }
     },
 
     "onremove" to { vnode: dynamic ->
-        (vnode.state[symInstance] as Component<*, *>)._internalOnRemove()
+        (vnode.state[symInstance] as Component<*>)._internalOnRemove()
     },
 
     // Bridging from Mithrils 'view' method to Component.render()
     "view" to { vnode: dynamic ->
-        (vnode.state[symInstance] as Component<*, *>)._internalRender()
+        (vnode.state[symInstance] as Component<*>)._internalRender()
     }
 ).js

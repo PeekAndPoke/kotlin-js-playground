@@ -1,4 +1,4 @@
-package de.peekandpoke.app
+package de.peekandpoke.app.pages
 
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.PureComponent

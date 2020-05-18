@@ -3,7 +3,7 @@ package de.peekandpoke.kraft.vdom
 import de.peekandpoke.kraft.components.Component
 import kotlinx.html.FlowContent
 
-class VDom(engine: VDomEngine, host: Component<*, *>? = null) : FlowContent {
+class VDom(engine: VDomEngine, host: Component<*>? = null) : FlowContent {
 
     fun render(builder: VDom.() -> Any?): dynamic {
         builder()

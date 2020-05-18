@@ -1,10 +1,14 @@
 package de.peekandpoke.app
 
+import de.peekandpoke.app.pages.HomePage
 import de.peekandpoke.app.pages.LoginPage
 import de.peekandpoke.app.pages.adminusers.AdminUsersList
+import de.peekandpoke.app.pages.demo.CountersPage
+import de.peekandpoke.app.pages.demo.OrgsPage
+import de.peekandpoke.app.pages.demo.RemotePage
 import de.peekandpoke.app.template.Sidebar
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
+import de.peekandpoke.kraft.components.NoProps
+import de.peekandpoke.kraft.components.PureComponent
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
@@ -13,20 +17,20 @@ import kotlinx.html.div
 
 fun Tag.app() = comp { App(it) }
 
-class App(ctx: Ctx<Nothing?>) : Component<Nothing?, App.State>(ctx) {
+class App(ctx: NoProps) : PureComponent(ctx) {
 
-    inner class State {
-        val matchedRoute by stream(router.current)
-    }
+    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override val state = State()
+    private val matchedRoute by stream(router.current)
+
+    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
 
         console.log("rendering app")
 
         div {
-            if (state.matchedRoute.route == Nav.login) {
+            if (matchedRoute.route == Nav.login) {
                 LoginPage()
             } else {
 
@@ -39,14 +43,14 @@ class App(ctx: Ctx<Nothing?>) : Component<Nothing?, App.State>(ctx) {
 
                     ui.pusher.padded.right {
                         // Little hack to trick mithril. Otherwise it will not repaint when a route is changed.
-                        attributes["key"] = state.matchedRoute.pattern
+                        attributes["key"] = matchedRoute.pattern
 
                         ui.content {
-                            when (state.matchedRoute.route) {
+                            when (matchedRoute.route) {
                                 Nav.home -> HomePage()
                                 Nav.counters -> CountersPage()
                                 Nav.remote -> RemotePage()
-                                Nav.orgs -> OrgsPage(state.matchedRoute.param("id"))
+                                Nav.orgs -> OrgsPage(matchedRoute.param("id"))
 
                                 Nav.adminUsersList -> AdminUsersList()
                                 else -> HomePage()

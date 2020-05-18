@@ -14,7 +14,7 @@ import org.w3c.dom.HTMLElement
 fun Tag.MenuItem(state: String, title: RenderFn, items: List<RenderFn>) =
     comp(MenuItemComponent.Props(state, title, items)) { MenuItemComponent(it) }
 
-class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, MenuItemComponent.State>(ctx) {
+class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props>(ctx) {
 
     data class Props(
         val state: String,
@@ -22,11 +22,11 @@ class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, Me
         val items: List<FlowContent.() -> Unit>
     )
 
-    inner class State {
-        var active by property(false)
-    }
+    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override val state = State()
+    private var active by property(false)
+
+    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
 
@@ -36,19 +36,17 @@ class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, Me
             ui.title.header.item H4 {
                 icon.dropdown()
                 props.title(this)
-                onClick { state.active = !state.active }
+                onClick { active = !active }
             }
 
             ui.active.animated.content {
 
-                console.log("DOM", dom)
-
-                if (state.active) {
+                if (active) {
                     if (scrollHeight != null) {
-                        style = "max-height: ${scrollHeight}px; transition: max-height 0.5s ease-out; overflow: hidden;"
+                        style = "max-height: ${scrollHeight}px; transition: max-height 0.2s ease-out; overflow: hidden;"
                     }
                 } else {
-                    style = "max-height: 0; transition: max-height 0.5s ease-out; overflow: hidden;"
+                    style = "max-height: 0; transition: max-height 0.2s ease-out; overflow: hidden;"
                 }
 
 

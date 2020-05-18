@@ -28,7 +28,7 @@ fun Tag.InputField(
     InputFieldComponent.PropsBuilder(type, { prop.get() }, { prop.set(it) }).apply(customize).build()
 ) { InputFieldComponent(it) }
 
-class InputFieldComponent(ctx: Ctx<Props>) : Component<InputFieldComponent.Props, InputFieldComponent.State>(ctx) {
+class InputFieldComponent(ctx: Ctx<Props>) : Component<InputFieldComponent.Props>(ctx) {
 
     class PropsBuilder(
         private val type: InputType,
@@ -51,20 +51,15 @@ class InputFieldComponent(ctx: Ctx<Props>) : Component<InputFieldComponent.Props
         val getter: () -> String,
         val setter: (String) -> Unit,
         val accepts: List<Rule<String>> = emptyList()
-    ) {
-    }
+    )
 
-    inner class State {
-        var value by property(props.getter())
-        var errors by property<List<String>>(emptyList())
-    }
-
-    override val state = State()
+    private var input by property(props.getter())
+    private var errors by property<List<String>>(emptyList())
 
     override fun VDom.render() {
 
         input {
-            value = state.value
+            value = input
             type = props.type
 //            onChange { event ->
 //                val value = (event.target as HTMLInputElement).value
@@ -76,24 +71,20 @@ class InputFieldComponent(ctx: Ctx<Props>) : Component<InputFieldComponent.Props
 //            }
 
             onChange { event ->
-                val value = (event.target as HTMLInputElement).value
+                input = (event.target as HTMLInputElement).value
 
-                state.value = value
+                errors = props.accepts.filter { !it(input) }.map { it.message }
 
-                state.errors = props.accepts
-                    .filter { !it(value) }
-                    .map { it.message }
-
-                if (state.errors.isNotEmpty()) {
+                if (errors.isNotEmpty()) {
                     return@onChange
                 }
 
-                props.setter(value)
+                props.setter(input)
             }
         }
 
-        if (state.errors.isNotEmpty()) {
-            state.errors.forEach { error ->
+        if (errors.isNotEmpty()) {
+            errors.forEach { error ->
                 ui.basic.red.pointing.label { +error }
             }
         }
