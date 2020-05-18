@@ -2,6 +2,8 @@ package de.peekandpoke.kraft.components
 
 import de.peekandpoke.kraft.vdom.VDomEngine
 
+typealias NoProps = Ctx<Nothing?>
+
 data class Ctx<PROPS>(
     val engine: VDomEngine,
     val parent: Component<*, *>?,

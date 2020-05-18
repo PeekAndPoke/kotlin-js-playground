@@ -12,11 +12,13 @@ import kotlinx.html.div
 @Suppress("FunctionName")
 fun Tag.OrgsPage(org: String) = comp(OrgsPageComponent.Props(org = org)) { OrgsPageComponent(it) }
 
-class OrgsPageComponent(ctx: Ctx<Props>) : Component<OrgsPageComponent.Props, Nothing?>(ctx, null) {
+class OrgsPageComponent(ctx: Ctx<Props>) : Component<OrgsPageComponent.Props, Nothing?>(ctx) {
 
     data class Props(
         val org: String
     )
+
+    override val state = null
 
     override fun VDom.render() {
         div {

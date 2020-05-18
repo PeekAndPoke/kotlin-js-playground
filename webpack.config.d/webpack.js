@@ -9,7 +9,7 @@ if (devServer) {
         poll: 300
     };
     devServer.stats = {
-        warnings: false
+        warnings: true
     };
     // config.devServer.clientLogLevel = 'error';
 }

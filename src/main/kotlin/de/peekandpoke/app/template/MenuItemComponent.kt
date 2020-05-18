@@ -14,19 +14,19 @@ import org.w3c.dom.HTMLElement
 fun Tag.MenuItem(state: String, title: RenderFn, items: List<RenderFn>) =
     comp(MenuItemComponent.Props(state, title, items)) { MenuItemComponent(it) }
 
-class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, MenuItemComponent.State>(
-    ctx,
-    State()
-) {
+class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, MenuItemComponent.State>(ctx) {
+
     data class Props(
         val state: String,
         val title: FlowContent.() -> Unit,
         val items: List<FlowContent.() -> Unit>
     )
 
-    data class State(
-        val active: Boolean = false
-    )
+    inner class State {
+        var active by property(false)
+    }
+
+    override val state = State()
 
     override fun VDom.render() {
 
@@ -36,7 +36,7 @@ class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props, Me
             ui.title.header.item H4 {
                 icon.dropdown()
                 props.title(this)
-                onClick { modState { it.copy(active = !it.active) } }
+                onClick { state.active = !state.active }
             }
 
             ui.active.animated.content {

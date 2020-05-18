@@ -1,17 +1,22 @@
 package de.peekandpoke.app
 
+import de.peekandpoke.app.domain.adminusers.AdminUserModel
 import de.peekandpoke.kraft.meiosis.Stream
 
-data class User(
-    val id: String
-)
+object AppState {
 
-val userState = Stream<User?>(User("Karsten"))
-//val userState = Stream<User?>(null)
+    val user = Stream<AdminUserModel?>(null)
 
-object UserActions {
+    object UserActions {
+        fun set(value: AdminUserModel) = user.next(value)
+        fun clear() = user.next(null)
+    }
 
-    fun set(user: User) = userState.next(user)
+    val authToken = Stream<String?>(null)
 
-    fun clear() = userState.next(null)
+    object AuthTokenActions {
+        fun set(value: String) = authToken.next(value)
+        fun clear() = authToken.next(null)
+    }
 }
+

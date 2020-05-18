@@ -15,17 +15,17 @@ fun HTMLTag.helloWorld(factor: Int) = comp(HelloWorldComponent.Props(factor = fa
     HelloWorldComponent(it)
 }
 
-class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props, HelloWorldComponent.State>(
-    ctx,
-    State(counter = 0)
-) {
+class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props, HelloWorldComponent.State>(ctx) {
+
     data class Props(
         val factor: Int
     )
 
-    data class State(
-        val counter: Int
-    )
+    inner class State {
+        var counter by property(0)
+    }
+
+    override val state = State()
 
     override fun onRemove() {
 //        console.log("onRemove", this)
@@ -47,12 +47,12 @@ class HelloWorldComponent(ctx: Ctx<Props>) : Component<HelloWorldComponent.Props
                 ui.row {
                     ui.column {
                         button {
-                            onClick { modState { it.copy(counter = it.counter + 1) } }
                             +"+"
+                            onClick { state.counter++ }
                         }
                         button {
-                            onClick { modState { it.copy(counter = it.counter - 1) } }
                             +"-"
+                            onClick { state.counter-- }
                         }
                     }
                 }

@@ -3,15 +3,18 @@ package de.peekandpoke.kraft.components
 import de.peekandpoke.kraft.meiosis.Stream
 import de.peekandpoke.kraft.vdom.VDom
 import org.w3c.dom.Element
+import kotlin.properties.ObservableProperty
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Base class of all Components
  */
-abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>, initialState: STATE) {
+abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>) {
 
     private val parent: Component<*, *>? = ctx.parent
     private var _props: PROPS = ctx.props
-    private var _state: STATE = initialState
 
     private var needsRedraw = true
     private var renderCache: Any? = null
@@ -19,9 +22,10 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>, initialState: STATE)
     private val unSubscribers = mutableListOf<() -> Unit>()
 
     val props: PROPS get() = _props
-    val state: STATE get() = _state
 
     var dom: Element? = null
+
+    abstract val state: STATE
 
     abstract fun VDom.render()
 
@@ -33,29 +37,42 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>, initialState: STATE)
         return props != nextProps
     }
 
-    fun modState(mod: (STATE) -> STATE) {
-        val newState = mod(_state)
-
-        val shouldRedraw = newState != _state
-
-        _state = newState
-
-        if (shouldRedraw) {
-            triggerRedraw()
-        }
-    }
 
     fun triggerRedraw() {
         // triggering a redraw for all parent components
         _triggerRedrawRecursive()
     }
 
-    operator fun <T> Stream<T>.invoke(handler: (T) -> Unit): () -> Unit {
+
+    ////  Protected helpers  ///////////////////////////////////////////////////////////////////////////////////////////
+
+    protected operator fun <T> Stream<T>.invoke(handler: (T) -> Unit): () -> Unit {
 
         return this.subscribeToStream(handler).apply {
             unSubscribers.add(this)
         }
     }
+
+    protected fun <T> stream(stream: Stream<T>): ReadOnlyProperty<Any?, T> {
+
+        stream { triggerRedraw() }
+
+        return object : ReadOnlyProperty<Any?, T> {
+            override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+                return stream()
+            }
+        }
+    }
+
+    protected fun <T> property(initial: T): ReadWriteProperty<Any?, T> =
+        object : ObservableProperty<T>(initial) {
+            override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+                console.log(property, oldValue, newValue)
+                triggerRedraw()
+            }
+        }
+
+    ////  Internal functions  //////////////////////////////////////////////////////////////////////////////////////////
 
     internal fun _triggerRedrawRecursive() {
         needsRedraw = true

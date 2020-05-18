@@ -7,34 +7,40 @@ import de.peekandpoke.kraft.components.onClick
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.kraft.vdom.custom
 import de.peekandpoke.ultrajs.semanticui.ui
-import kotlinx.html.*
+import kotlinx.html.Tag
+import kotlinx.html.button
+import kotlinx.html.h1
+import kotlinx.html.h2
 
 @Suppress("FunctionName")
 fun Tag.CountersPage() = comp { CountersPageComponent(it) }
 
-class CountersPageComponent(ctx: Ctx<Nothing?>): Component<Nothing?, CountersPageComponent.State>(ctx, State()) {
+class CountersPageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, CountersPageComponent.State>(ctx) {
 
-    data class State(
-        val factor: Int = 1,
-        val numItems: Int = 3
-    )
+    inner class State {
+        var factor by property(1)
+        var numItems by property(3)
+    }
+
+    override val state = State()
 
     override fun VDom.render() {
         custom("counters") {
             h1 { +"Counters" }
 
-            h2 { +"Factor" }
-            button { +"+"; onClick { modState { it.copy(factor = it.factor + 1) } } }
-
-            h2 { +"Num Items" }
-            button { +"+"; onClick { modState { it.copy(numItems = it.numItems + 100) } } }
-            button { +"-"; onClick { modState { it.copy(numItems = it.numItems - 100) } } }
-
-            pre {
-                +state.toString()
-            }
-
             ui.grid {
+
+                ui.row {
+                    ui.header H2 { +"Factor ${state.factor}" }
+                    button { +"+"; onClick { state.factor++ } }
+                }
+
+                ui.row {
+                    ui.header H2 { +"Num Items  ${state.numItems}" }
+                    button { +"+"; onClick { state.numItems += 10 } }
+                    button { +"-"; onClick { state.numItems -= 10 } }
+                }
+
                 repeat(state.numItems) {
                     ui.row {
                         helloWorld((it + 1) * state.factor)

@@ -1,17 +1,16 @@
 package de.peekandpoke.app
 
+import de.peekandpoke.app.api.ApiQueries
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
-import de.peekandpoke.kraft.remote.body
-import de.peekandpoke.kraft.remote.onError
-import de.peekandpoke.kraft.remote.onErrorLog
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.kraft.vdom.custom
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.html.Tag
 import kotlinx.html.button
@@ -20,13 +19,13 @@ import kotlinx.html.pre
 @Suppress("FunctionName")
 fun Tag.RemotePage() = comp { RemotePageComponent(it) }
 
-class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageComponent.State>(ctx, State()) {
+class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageComponent.State>(ctx) {
 
-    data class State(
-        val appInfo: Any? = null
-    )
+    inner class State {
+        var response by property<Any?>(null)
+    }
 
-    private val client = de.peekandpoke.kraft.remote.remote("http://api.jointhebase.local:8080")
+    override val state = State()
 
     override fun VDom.render() {
         custom("remote") {
@@ -37,8 +36,8 @@ class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageCo
                 onClick { loadAppInfo() }
             }
 
-            if (state.appInfo != null) {
-                pre { +JSON.stringify(state.appInfo, null, 2) }
+            if (state.response != null) {
+                pre { +JSON.stringify(state.response, null, 2) }
             }
         }
     }
@@ -46,15 +45,9 @@ class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageCo
     private fun loadAppInfo() {
         GlobalScope.launch {
 
-            val results = client.get("app-info")
-                .onError { console.log(it) }
-                .onErrorLog().body()
-
-            results.collect { result ->
-                modState {
-                    it.copy(appInfo = JSON.parse(result))
-                }
-            }
+            Api.login.login("karsten@jointhebase.co", "joinmenow")
+                .onEach { console.log(it) }
+                .collect { state.response = JSON.stringify(it) }
         }
     }
 }

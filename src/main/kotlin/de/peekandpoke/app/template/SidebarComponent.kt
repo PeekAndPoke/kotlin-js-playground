@@ -1,14 +1,12 @@
 package de.peekandpoke.app.template
 
+import de.peekandpoke.app.AppState
 import de.peekandpoke.app.Nav
-import de.peekandpoke.app.User
 import de.peekandpoke.app.router
-import de.peekandpoke.app.userState
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.RenderFn
 import de.peekandpoke.kraft.components.comp
-import de.peekandpoke.kraft.routing.MatchedRoute
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.kraft.vdom.custom
 import de.peekandpoke.ultrajs.semanticui.icon
@@ -19,18 +17,14 @@ import kotlinx.html.div
 @Suppress("FunctionName")
 fun Tag.Sidebar() = comp { SidebarComponent(it) }
 
-class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponent.State>(ctx, State()) {
+class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponent.State>(ctx) {
 
-    data class State(
-        val user: User? = null,
-        val matchedRoute: MatchedRoute = MatchedRoute.default
-    )
-
-    init {
-        router.onChange { next -> modState { it.copy(matchedRoute = next) } }
-
-        userState { next -> modState { it.copy(user = next) } }
+    inner class State {
+        val user by stream(AppState.user)
+        val matchedRoute by stream(router.current)
     }
+
+    override val state = State()
 
     override fun VDom.render() {
 
@@ -46,6 +40,24 @@ class SidebarComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, SidebarComponen
             }
 
             ui.accordion {
+
+                MenuItem(
+                    state = state.matchedRoute.pattern,
+                    title = {
+                        div {
+                            icon.user()
+                            +"Admin Users"
+                        }
+                    },
+                    items = listOf<RenderFn> {
+                        ui.item.given(state.matchedRoute.route == Nav.adminUsersList) { active } A {
+                            href = Nav.adminUsersList()
+                            +"List"
+                        }
+                    }
+                )
+
+
                 MenuItem(
                     state = state.matchedRoute.pattern,
                     title = {

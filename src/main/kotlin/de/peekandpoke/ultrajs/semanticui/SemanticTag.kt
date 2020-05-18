@@ -2,7 +2,7 @@ package de.peekandpoke.ultrajs.semanticui
 
 import kotlinx.html.*
 
-@Suppress("FunctionName", "PropertyName")
+@Suppress("FunctionName", "PropertyName", "unused")
 class SemanticTag(private val parent: FlowContent, private val cssClasses: MutableList<String>) {
 
     // switches
@@ -36,6 +36,7 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
     @SemanticUiTagMarker infix fun Table(flow: TABLE.() -> Unit) = renderTable(flow)
 
     // dynamic class
+    @SemanticUiCssMarker fun with(block: SemanticTag.() -> SemanticTag): SemanticTag = this.run(block)
 
     @SemanticUiCssMarker fun with(vararg cls: String) = this + cls
     @SemanticUiCssMarker fun with(vararg cls: String, flow: DIV.() -> Unit) = (this + cls).renderDiv(flow)

@@ -51,7 +51,7 @@ class Router(private val mountedRoutes: List<MountedRoute>) {
 
     private val prefix = "#"
 
-    val onChange = Stream(MatchedRoute.default)
+    val current = Stream(MatchedRoute.default)
 
     init {
         window.addEventListener("DOMContentLoaded", ::windowListener)
@@ -75,7 +75,7 @@ class Router(private val mountedRoutes: List<MountedRoute>) {
 
                 mounted.middlewares.forEach { it(ctx) }
 
-                onChange.next(match)
+                current.next(match)
             }
 
         mountedRoutes.map { it.route.match(location) }.firstOrNull()?.let { match ->

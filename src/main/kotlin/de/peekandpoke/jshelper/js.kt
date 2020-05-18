@@ -1,7 +1,7 @@
 package de.peekandpoke.jshelper
 
-inline val jsObject get() = js("({})")
-inline val jsArray get() = js("([])")
+val jsObject get() = js("({})")
+val jsArray get() = js("([])")
 
 fun jsObjectOf(vararg pairs: Pair<String, dynamic>): dynamic {
     val obj = jsObject
