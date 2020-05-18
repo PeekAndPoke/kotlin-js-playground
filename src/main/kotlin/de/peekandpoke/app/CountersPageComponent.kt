@@ -27,8 +27,8 @@ class CountersPageComponent(ctx: Ctx<Nothing?>): Component<Nothing?, CountersPag
             button { +"+"; onClick { modState { it.copy(factor = it.factor + 1) } } }
 
             h2 { +"Num Items" }
-            button { +"+"; onClick { modState { it.copy(numItems = it.numItems + 1) } } }
-            button { +"-"; onClick { modState { it.copy(numItems = it.numItems - 1) } } }
+            button { +"+"; onClick { modState { it.copy(numItems = it.numItems + 100) } } }
+            button { +"-"; onClick { modState { it.copy(numItems = it.numItems - 100) } } }
 
             pre {
                 +state.toString()

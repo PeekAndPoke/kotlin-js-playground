@@ -2,6 +2,8 @@ package de.peekandpoke.app
 
 import de.peekandpoke.kraft.routing.ParameterizedRoute1
 import de.peekandpoke.kraft.routing.StaticRoute
+import de.peekandpoke.kraft.routing.router
+import de.peekandpoke.kraft.routing.routerMiddleware
 
 object Nav {
 
@@ -16,3 +18,23 @@ object Nav {
     val orgs = ParameterizedRoute1("/org/{id}")
 }
 
+val isLoggedIn = routerMiddleware {
+    if (userState() == null) {
+        router.navTo(Nav.login())
+    }
+}
+
+val router = router {
+
+    mount(Nav.login)
+
+    using(isLoggedIn) {
+        mount(
+            Nav.login,
+            Nav.home,
+            Nav.counters,
+            Nav.remote,
+            Nav.orgs
+        )
+    }
+}

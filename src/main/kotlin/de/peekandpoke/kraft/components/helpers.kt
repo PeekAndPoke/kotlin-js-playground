@@ -2,11 +2,14 @@ package de.peekandpoke.kraft.components
 
 import de.peekandpoke.kraft.vdom.VDomTagConsumer
 import kotlinx.html.CommonAttributeGroupFacade
+import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
+
+typealias RenderFn = FlowContent.() -> Unit
 
 /**
  * Adds a child component to the current tag

@@ -2,6 +2,7 @@ package de.peekandpoke.kraft.components
 
 import de.peekandpoke.kraft.meiosis.Stream
 import de.peekandpoke.kraft.vdom.VDom
+import org.w3c.dom.Element
 
 /**
  * Base class of all Components
@@ -20,48 +21,57 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>, initialState: STATE)
     val props: PROPS get() = _props
     val state: STATE get() = _state
 
+    var dom: Element? = null
+
     abstract fun VDom.render()
 
     open fun onRemove() {
     }
 
+    open fun shouldRedraw(nextProps: PROPS): Boolean {
+//        console.log("nextProps", this, nextProps, props, nextProps != props)
+        return props != nextProps
+    }
+
     fun modState(mod: (STATE) -> STATE) {
         val newState = mod(_state)
 
-        if (newState != _state) {
+        val shouldRedraw = newState != _state
+
+        _state = newState
+
+        if (shouldRedraw) {
             triggerRedraw()
         }
-
-        _state = mod(_state)
     }
 
     fun triggerRedraw() {
+        // triggering a redraw for all parent components
+        _triggerRedrawRecursive()
+    }
+
+    operator fun <T> Stream<T>.invoke(handler: (T) -> Unit): () -> Unit {
+
+        return this.subscribeToStream(handler).apply {
+            unSubscribers.add(this)
+        }
+    }
+
+    internal fun _triggerRedrawRecursive() {
         needsRedraw = true
 
         // propagate the redraw to the parent
         if (parent != null) {
-            parent.triggerRedraw()
+            parent._triggerRedrawRecursive()
         } else {
             ctx.engine.triggerRedraw()
         }
     }
 
-    operator fun <T> Stream<T>.invoke(handler: (T) -> Unit): () -> Unit {
-
-        val handlerWithRedraw: (T) -> Unit = {
-            triggerRedraw()
-            handler(it)
-        }
-
-        return this.subscribeToStream(handlerWithRedraw).apply {
-            unSubscribers.add(this)
-        }
-    }
-
     internal fun _nextCtx(newCtx: Ctx<PROPS>) {
 
-        if (newCtx.props != _props) {
-            triggerRedraw()
+        if (shouldRedraw(newCtx.props)) {
+            needsRedraw = true
         }
 
         _props = newCtx.props
@@ -75,6 +85,7 @@ abstract class Component<PROPS, STATE>(val ctx: Ctx<PROPS>, initialState: STATE)
     }
 
     internal fun _internalRender(): Any? {
+//        console.log("needsRedraw", needsRedraw, this)
 
         if (!needsRedraw) {
             return renderCache

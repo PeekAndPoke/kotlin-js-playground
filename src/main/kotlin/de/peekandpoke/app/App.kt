@@ -1,13 +1,14 @@
 package de.peekandpoke.app
 
+import de.peekandpoke.app.template.Sidebar
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
-import de.peekandpoke.kraft.routing.Route
+import de.peekandpoke.kraft.routing.MatchedRoute
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.Tag
-import kotlinx.html.a
+import kotlinx.html.div
 
 fun Tag.app() = comp { App(it) }
 
@@ -15,13 +16,13 @@ class App(ctx: Ctx<Nothing?>) : Component<Nothing?, App.State>(ctx, State()) {
 
     data class State(
         val user: User? = null,
-        val route: Route = Route.default
+        val matchedRoute: MatchedRoute = MatchedRoute.default
     )
 
     init {
         router.onChange { next ->
             modState {
-                it.copy(route = next)
+                it.copy(matchedRoute = next)
             }
         }
 
@@ -36,34 +37,34 @@ class App(ctx: Ctx<Nothing?>) : Component<Nothing?, App.State>(ctx, State()) {
 
         console.log("rendering app")
 
-        ui.container {
-            // Little hack to trick mithril. Otherwise it will not repaint when a route is changed.
-            attributes["key"] = state.route.pattern
-
-            if (state.route == Nav.login) {
+        div {
+            if (state.matchedRoute.route == Nav.login) {
                 LoginPage()
             } else {
 
-                ui.horizontal.list {
-                    ui.item {
-                        a(href = Nav.home()) { +"Home" }
-                    }
-                    ui.item {
-                        a(href = Nav.counters()) { +"Counters" }
-                    }
-                    ui.item {
-                        a(href = Nav.remote()) { +"Remote" }
-                    }
-                }
+                div {
 
-                when (state.route) {
-                    Nav.home -> HomePage()
-                    Nav.counters -> CountersPage()
-                    Nav.remote -> RemotePage()
-                    else -> HomePage()
+                    ui.sidebar.vertical.left.inverted.purple.menu.visible.fixed {
+                        attributes["key"] = "__sidebar__"
+                        Sidebar()
+                    }
+
+                    ui.pusher.padded.right {
+                        // Little hack to trick mithril. Otherwise it will not repaint when a route is changed.
+                        attributes["key"] = state.matchedRoute.pattern
+
+                        ui.content {
+                            when (state.matchedRoute.route) {
+                                Nav.home -> HomePage()
+                                Nav.counters -> CountersPage()
+                                Nav.remote -> RemotePage()
+                                Nav.orgs -> OrgsPage(state.matchedRoute.param("id"))
+                                else -> HomePage()
+                            }
+                        }
+                    }
                 }
             }
         }
-
     }
 }

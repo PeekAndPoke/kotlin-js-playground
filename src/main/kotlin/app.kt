@@ -5,7 +5,6 @@ import kotlin.browser.document
 
 fun main() {
 
-
     document.addEventListener("DOMContentLoaded", {
 
         val mount = document.getElementById("spa") as HTMLElement

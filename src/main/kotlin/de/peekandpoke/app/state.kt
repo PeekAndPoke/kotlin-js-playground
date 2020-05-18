@@ -6,7 +6,8 @@ data class User(
     val id: String
 )
 
-val userState = Stream<User?>(null)
+val userState = Stream<User?>(User("Karsten"))
+//val userState = Stream<User?>(null)
 
 object UserActions {
 

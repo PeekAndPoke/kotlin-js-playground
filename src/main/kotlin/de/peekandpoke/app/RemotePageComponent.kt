@@ -1,7 +1,7 @@
 package de.peekandpoke.app
 
+import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
-import de.peekandpoke.kraft.components.StaticComponent
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
 import de.peekandpoke.kraft.remote.body
@@ -15,11 +15,16 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.Tag
 import kotlinx.html.button
+import kotlinx.html.pre
 
 @Suppress("FunctionName")
 fun Tag.RemotePage() = comp { RemotePageComponent(it) }
 
-class RemotePageComponent(ctx: Ctx<Nothing?>) : StaticComponent(ctx) {
+class RemotePageComponent(ctx: Ctx<Nothing?>) : Component<Nothing?, RemotePageComponent.State>(ctx, State()) {
+
+    data class State(
+        val appInfo: Any? = null
+    )
 
     private val client = de.peekandpoke.kraft.remote.remote("http://api.jointhebase.local:8080")
 
@@ -29,20 +34,25 @@ class RemotePageComponent(ctx: Ctx<Nothing?>) : StaticComponent(ctx) {
 
             button {
                 +"APP INFO"
-                onClick {
+                onClick { loadAppInfo() }
+            }
 
+            if (state.appInfo != null) {
+                pre { +JSON.stringify(state.appInfo, null, 2) }
+            }
+        }
+    }
 
+    private fun loadAppInfo() {
+        GlobalScope.launch {
 
-                    GlobalScope.launch {
+            val results = client.get("app-info")
+                .onError { console.log(it) }
+                .onErrorLog().body()
 
-                        val result = client.get("app-info")
-                            .onError { console.log(it) }
-                            .onErrorLog().body()
-
-                        result.collect {
-                            console.log(it)
-                        }
-                    }
+            results.collect { result ->
+                modState {
+                    it.copy(appInfo = JSON.parse(result))
                 }
             }
         }
