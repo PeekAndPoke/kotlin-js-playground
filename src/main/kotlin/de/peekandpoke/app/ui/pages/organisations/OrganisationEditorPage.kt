@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
+import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.OrganisationEditor(id: String) = comp(OrganisationEditorPage.Props(id)) { OrganisationEditorPage(it) }
@@ -48,8 +49,7 @@ class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditor
     }
 
     override fun VDom.render() {
-        ui.basic.inverted.blue.segment {
-            css(Theme.Pages.headerPadding)
+        ui.basic.inverted.blue.segment.with("page-header") {
 
             ui.header H1 {
                 icon.small.edit()

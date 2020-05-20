@@ -10,7 +10,10 @@ import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.styling.css
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
+import kotlinx.css.Image
+import kotlinx.css.background
 import kotlinx.css.backgroundColor
+import kotlinx.css.backgroundImage
 import kotlinx.html.Tag
 import kotlinx.html.div
 
@@ -37,6 +40,7 @@ class AppComponent(ctx: NoProps) : PureComponent(ctx) {
                 ui.sidebar.vertical.left.inverted.black.menu.visible.fixed {
                     css {
                         backgroundColor = Theme.Colors.dark
+                        backgroundImage = Image("url(/admin-assets/images/backgrounds/noise-100x100-medium.png)")
                     }
                     attributes["key"] = "__sidebar__"
                     Sidebar()

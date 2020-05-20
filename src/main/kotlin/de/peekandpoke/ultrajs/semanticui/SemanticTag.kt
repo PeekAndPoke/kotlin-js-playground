@@ -97,6 +97,8 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
     @SemanticUiCssMarker val dropdown get() = this + "dropdown"
     @SemanticUiCssMarker val sticky get() = this + "sticky"
     @SemanticUiCssMarker val paragraph get() = this + "paragraph"
+    @SemanticUiCssMarker val inline get() = this + "inline"
+    @SemanticUiCssMarker val slider get() = this + "slider"
 
     // display sizes
 

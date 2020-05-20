@@ -14,10 +14,5 @@ object Theme {
         val whiteText = inlineStyle {
             color = Color.white
         }
-
-        val headerPadding = inlineStyle {
-            paddingTop = 50.px
-            paddingBottom = 50.px
-        }
     }
 }

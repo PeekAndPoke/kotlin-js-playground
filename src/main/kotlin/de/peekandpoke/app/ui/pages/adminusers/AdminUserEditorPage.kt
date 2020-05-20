@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
+import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.AdminUsersEditor(id: String) = comp(AdminUserEditorPage.Props(id)) { AdminUserEditorPage(it) }
@@ -57,9 +58,7 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
     }
 
     override fun VDom.render() {
-        ui.basic.inverted.blue.segment {
-            css(Theme.Pages.headerPadding)
-
+        ui.basic.inverted.blue.segment.with("page-header") {
             ui.header H1 {
                 icon.small.edit()
                 +"Edit Admin User '${original?.name}'"

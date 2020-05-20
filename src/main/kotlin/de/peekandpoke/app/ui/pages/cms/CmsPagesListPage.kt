@@ -41,8 +41,8 @@ class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
 
     override fun VDom.render() {
 
-        ui.basic.inverted.padded.blue.segment {
-            css(Theme.Pages.headerPadding)
+        ui.basic.inverted.padded.blue.segment.with("page-header") {
+
             ui.three.column.grid {
                 ui.column {
                     ui.header H1 {

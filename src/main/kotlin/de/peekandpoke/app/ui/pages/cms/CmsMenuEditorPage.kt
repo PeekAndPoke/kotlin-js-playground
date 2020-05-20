@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
+import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.CmsMenuEditor(id: String) = comp(CmsMenuEditorPage.Props(id)) { CmsMenuEditorPage(it) }
@@ -48,8 +49,7 @@ class CmsMenuEditorPage(ctx: Ctx<Props>) : FormComponent<CmsMenuEditorPage.Props
     }
 
     override fun VDom.render() {
-        ui.basic.inverted.blue.segment {
-            css(Theme.Pages.headerPadding)
+        ui.basic.inverted.blue.segment.with("page-header") {
 
             ui.grid {
                 ui.ten.wide.column {

@@ -4,7 +4,6 @@ import de.peekandpoke.app.Api
 import de.peekandpoke.app.AppState
 import de.peekandpoke.app.domain.adminusers.AdminUserProfile
 import de.peekandpoke.app.domain.domainCodec
-import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.Tabs
 import de.peekandpoke.app.ui.components.TabsComponent
 import de.peekandpoke.app.ui.components.forms.FormComponent
@@ -13,7 +12,6 @@ import de.peekandpoke.app.ui.components.forms.validation.NotBlank
 import de.peekandpoke.kraft.components.NoProps
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
-import de.peekandpoke.kraft.styling.css
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.icon
 import de.peekandpoke.ultrajs.semanticui.ui
@@ -22,7 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.circleArea
+import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.UserProfileEditor() = comp { UserProfileEditorPage(it) }
@@ -43,15 +41,14 @@ class UserProfileEditorPage(ctx: NoProps) : FormComponent<Nothing?>(ctx) {
 
     /** The auth claims of the currently logged in user */
     private val claims by stream(AppState.authClaims)
+
     /** The permissions of the currently logged in user */
     private val permissions by stream(AppState.permissions)
-
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        ui.basic.inverted.blue.segment {
-            css(Theme.Pages.headerPadding)
+        ui.basic.inverted.blue.segment.with("page-header") {
 
             ui.header H2 {
                 icon.small.edit()
@@ -120,9 +117,9 @@ class UserProfileEditorPage(ctx: NoProps) : FormComponent<Nothing?>(ctx) {
                 ui.segment {
                     ui.header H4 { +"Permissions" }
                     ui.list {
-                        ui.item { +"Groups: ${permissions.groups.joinToString(", ")}"}
-                        ui.item { +"Roles: ${permissions.roles.joinToString(", ")}"}
-                        ui.item { +"Permissions: ${permissions.permissions.joinToString(", ")}"}
+                        ui.item { +"Groups: ${permissions.groups.joinToString(", ")}" }
+                        ui.item { +"Roles: ${permissions.roles.joinToString(", ")}" }
+                        ui.item { +"Permissions: ${permissions.permissions.joinToString(", ")}" }
                     }
                 }
 

@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="/admin-assets/fomantic-ui@2.8.4/dist/semantic.min.css"/>
 
     <script src="kotlin-js-playground.js"></script>
-<!--    <script src="https://unpkg.com/mithril/mithril.js"></script>-->
+    <!--    <script src="https://unpkg.com/mithril/mithril.js"></script>-->
 
     <style>
         body {
             background-color: #F5F5F5;
+            background-image: url(/admin-assets/images/backgrounds/noise-100x100-soft.png);
         }
 
         .main > .sidebar {
@@ -31,9 +32,9 @@
             position: sticky;
             top: 0;
             z-index: 999 !important;
-            -webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
-            -moz-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
-            box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
+            -webkit-box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.25);
+            -moz-box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.25);
+            box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.25);
         }
 
         .toolbar-component .avatar {
@@ -46,9 +47,22 @@
             max-width: 32px;
         }
 
+        .main > .pusher > .content .page-header {
+            padding-top: 50px;
+            padding-bottom: 50px;
+
+            -webkit-box-shadow: inset 0px -1px 5px 1px rgba(0, 0, 0, 0.25);
+            -moz-box-shadow: inset 0px -1px 5px 1px rgba(0, 0, 0, 0.25);
+            box-shadow: inset 0px -1px 5px 1px rgba(0, 0, 0, 0.25);
+        }
+
+        .main > .pusher > .content .page-header H1 {
+            color: white;
+        }
+
     </style>
 </head>
 <body>
-    <div id="spa"></div>
+<div id="spa"></div>
 </body>
 </html>

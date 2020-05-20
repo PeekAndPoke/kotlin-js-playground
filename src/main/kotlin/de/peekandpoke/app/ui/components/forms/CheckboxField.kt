@@ -69,17 +69,17 @@ class CheckboxField(ctx: Ctx<Props>) : Component<CheckboxField.Props>(ctx) {
 
     override fun VDom.render() {
 
-        ui.with(props.appearance).field {
-            label {
+        ui.with(props.appearance).inline.field {
+            ui.toggle.checkbox {
                 input {
                     type = InputType.checkBox
                     checked = props.getter()
                     value = "1"
                     onChange { onInput((it.target as HTMLInputElement).checked) }
                 }
-
-                +props.label
+                label { +props.label }
             }
+
             if (errors.isNotEmpty()) {
                 errors.forEach { error ->
                     ui.basic.red.pointing.label { +error }
