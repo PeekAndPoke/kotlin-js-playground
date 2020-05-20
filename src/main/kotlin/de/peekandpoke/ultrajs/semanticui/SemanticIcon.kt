@@ -546,6 +546,7 @@ class SemanticIcon(private val parent: FlowContent) {
         user_outline("user outline"),
         user_circle("user circle"),
         user_circle_outline("user circle outline"),
+        user_shield("user shield"),
 
         // Logistics ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1098,6 +1099,10 @@ class SemanticIcon(private val parent: FlowContent) {
     @SemanticUiCssMarker val middle get() = this + "middle"
     @SemanticUiCssMarker val aligned get() = this + "aligned"
 
+    // Behaviour ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @SemanticUiCssMarker val link get() = this + "link"
+
     // Size ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @SemanticUiCssMarker val mini get() = this + "mini"
@@ -1646,6 +1651,7 @@ class SemanticIcon(private val parent: FlowContent) {
     @SemanticIconMarker fun user_outline() = render(Name.user_outline)
     @SemanticIconMarker fun user_circle() = render(Name.user_circle)
     @SemanticIconMarker fun user_circle_outline() = render(Name.user_circle_outline)
+    @SemanticIconMarker fun user_shield() = render(Name.user_shield)
 
     // Logistics ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

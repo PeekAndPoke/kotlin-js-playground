@@ -238,6 +238,7 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
     // modules
 
     @SemanticUiCssMarker val menu get() = this + "menu"
+    @SemanticUiCssMarker val tabular get() = this + "tabular"
     @SemanticUiCssMarker val sidebar get() = this + "sidebar"
     @SemanticUiCssMarker val item get() = this + "item"
     @SemanticUiCssMarker val items get() = this + "items"

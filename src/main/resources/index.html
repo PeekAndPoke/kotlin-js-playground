@@ -4,20 +4,48 @@
     <meta charset="UTF-8">
     <title>Kotlin JS Playground</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"/>
+    <link rel="stylesheet" href="/admin-assets/fomantic-ui@2.8.4/dist/semantic.min.css"/>
 
     <script src="kotlin-js-playground.js"></script>
-    <script src="https://unpkg.com/mithril/mithril.js"></script>
+<!--    <script src="https://unpkg.com/mithril/mithril.js"></script>-->
 
     <style>
-        .pusher {
+        body {
+            background-color: #F5F5F5;
+        }
+
+        .main > .sidebar {
+            z-index: 1000 !important;
+        }
+
+        .main > .pusher {
             padding-left: 260px;
             transform: none !important;
         }
 
-        .pusher > .content {
-            padding: 20px;
+        .main > .pusher > .fixed.menu.segment {
+            padding-left: 260px;
         }
+
+        .main > .pusher > .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 999 !important;
+            -webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
+            -moz-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
+            box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.25);
+        }
+
+        .toolbar-component .avatar {
+            padding-right: 10px;
+        }
+
+        .toolbar-component .avatar img {
+            border-radius: 50%;
+            max-height: 32px;
+            max-width: 32px;
+        }
+
     </style>
 </head>
 <body>

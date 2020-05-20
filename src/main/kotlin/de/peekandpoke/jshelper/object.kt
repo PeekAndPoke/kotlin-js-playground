@@ -40,3 +40,4 @@ external class Object internal constructor() {
 
 fun Any.getOwnPropertyNames(): Array<String> =
     Object.getOwnPropertyNames(this)
+

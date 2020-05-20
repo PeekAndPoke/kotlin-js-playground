@@ -1,39 +1,57 @@
 package de.peekandpoke.app
 
-import de.peekandpoke.kraft.routing.ParameterizedRoute1
-import de.peekandpoke.kraft.routing.StaticRoute
-import de.peekandpoke.kraft.routing.router
-import de.peekandpoke.kraft.routing.routerMiddleware
+import de.peekandpoke.app.ui.pages.HomePage
+import de.peekandpoke.app.ui.pages.LoginPage
+import de.peekandpoke.app.ui.pages.adminusers.AdminUsersEditor
+import de.peekandpoke.app.ui.pages.adminusers.AdminUsersList
+import de.peekandpoke.app.ui.pages.demo.CountersPage
+import de.peekandpoke.app.ui.pages.demo.RemotePage
+import de.peekandpoke.app.ui.pages.organisations.OrganisationEditor
+import de.peekandpoke.app.ui.pages.organisations.OrganisationsList
+import de.peekandpoke.app.ui.pages.userprofile.UserProfileEditor
+import de.peekandpoke.kraft.routing.*
 
 object Nav {
     val login = StaticRoute("/login")
     val home = StaticRoute("")
+
+    val userProfileEditor = StaticRoute("/profile")
+
+    val adminUsersList = StaticRoute("/administration/adminusers")
+    val adminUserEditor = ParameterizedRoute1("/administration/adminusers/{id}")
+
+    val organisationsList = StaticRoute("/administration/organisations")
+    val organisationEditor = ParameterizedRoute1("/administration/organisations/{id}")
+
+    // Demo pages
     val counters = StaticRoute("/counters")
     val remote = StaticRoute("/remote")
-    val orgs = ParameterizedRoute1("/org/{id}")
-
-    val adminUsersList = StaticRoute("/adminusers")
 }
 
-val isLoggedIn = routerMiddleware {
-    if (AppState.user() == null) {
-        router.navTo(Nav.login())
+val isLoggedIn: RouterMiddleware = routerMiddleware {
+    if (!AppState.permissions().isLoggedIn) {
+        mainRouter.navTo(Nav.login())
     }
 }
 
-val router = router {
+val mainRouter = router {
 
-    mount(Nav.login)
+    mount(Nav.login) { LoginPage() }
 
     using(isLoggedIn) {
-        mount(
-            Nav.login,
-            Nav.home,
-            Nav.counters,
-            Nav.remote,
-            Nav.orgs,
 
-            Nav.adminUsersList
-        )
+        mount(Nav.home) { HomePage() }
+
+        mount(Nav.userProfileEditor) { UserProfileEditor() }
+
+        mount(Nav.adminUsersList) { AdminUsersList() }
+        mount(Nav.adminUserEditor) { AdminUsersEditor(it["id"]) }
+
+        mount(Nav.organisationsList) { OrganisationsList() }
+        mount(Nav.organisationEditor) { OrganisationEditor(it["id"]) }
+
+        // Demo Pages
+        mount(Nav.counters) { CountersPage() }
+        mount(Nav.remote) { RemotePage() }
     }
 }

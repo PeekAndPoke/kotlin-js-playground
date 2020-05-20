@@ -1,5 +1,8 @@
 package de.peekandpoke.kraft.routing
 
+import de.peekandpoke.jshelper.decodeURIComponent
+import de.peekandpoke.jshelper.encodeURIComponent
+
 interface Route {
 
     val pattern: String
@@ -11,7 +14,7 @@ interface Route {
     }
 
     fun String.replacePlaceholder(placeholder: String, value: String) =
-        replace("{$placeholder}", value)
+        replace("{$placeholder}", encodeURIComponent(value))
 }
 
 data class MatchedRoute(
@@ -23,6 +26,8 @@ data class MatchedRoute(
     }
 
     val pattern = route.pattern
+
+    operator fun get(key: String) = param(key)
 
     fun param(name: String, default: String = ""): String = params[name] ?: default
 }
@@ -66,7 +71,9 @@ data class ParameterizedRoute1(override val pattern: String) : Route {
 
         return MatchedRoute(
             route = this,
-            params = placeholders.zip(match.groupValues).toMap()
+            params = placeholders.zip(
+                match.groupValues.drop(1).map(::decodeURIComponent)
+            ).toMap()
         )
     }
 

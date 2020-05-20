@@ -4,9 +4,10 @@ const devServer = config.devServer
 if (devServer) {
     devServer.hot = true
     devServer.port = 8888
+    devServer.overlay = true
     devServer.watchOptions = {
-        aggregateTimeout: 300,
-        poll: 300
+        aggregateTimeout: 500,
+        poll: 200
     };
     devServer.stats = {
         warnings: true

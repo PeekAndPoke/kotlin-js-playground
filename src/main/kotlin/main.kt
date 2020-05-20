@@ -12,18 +12,6 @@ import kotlin.browser.document
 
 fun main() {
 
-    val user = mapOf(
-        "id" to "ID",
-        "name" to "NAME",
-        "email" to "EMAIL",
-        "status" to "ACTIVE",
-        "roles" to listOf("A", "B").js
-    ).js
-
-    console.log("user", user)
-    val userParsed = domainCodec.parse(AdminUserModel.serializer(), JSON.stringify(user))
-    console.log("parsed with domainSerializer", userParsed)
-
     testCmsElements()
 
     document.addEventListener("DOMContentLoaded", {

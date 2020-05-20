@@ -1,6 +1,8 @@
 package de.peekandpoke.kraft.routing
 
-import de.peekandpoke.kraft.meiosis.Stream
+import de.peekandpoke.kraft.store.Stream
+import de.peekandpoke.kraft.store.WritableStream
+import kotlinx.html.FlowContent
 import org.w3c.dom.events.Event
 import kotlin.browser.window
 
@@ -8,10 +10,25 @@ fun router(builder: RouterBuilder.() -> Unit) = RouterBuilder().apply(builder).b
 
 fun routerMiddleware(func: RouterMiddleware): RouterMiddleware = func
 
+data class ActiveRoute(
+    val matchedRoute: MatchedRoute,
+    val mountedRoute: MountedRoute
+) {
+    val pattern = matchedRoute.pattern
+    val route = matchedRoute.route
+
+    fun render(flow: FlowContent) = mountedRoute.content(flow, matchedRoute)
+}
+
 data class MountedRoute(
     val route: Route,
-    val middlewares: List<RouterMiddleware>
-)
+    val middlewares: List<RouterMiddleware>,
+    val content: FlowContent.(MatchedRoute) -> Unit
+) {
+    companion object {
+        val default = MountedRoute(Route.default, emptyList()) {}
+    }
+}
 
 typealias RouterMiddleware = RouterMiddlewareContext.() -> Unit
 
@@ -28,16 +45,11 @@ class RouterBuilder {
 
     fun build() = Router(mounted.toList())
 
-    fun mount(vararg routes: Route) {
+    fun mount(route: Route, content: FlowContent.(MatchedRoute) -> Unit) {
 
-        routes.forEach {
-            mounted.add(
-                MountedRoute(
-                    it,
-                    middlewares.toList()
-                )
-            )
-        }
+        mounted.add(
+            MountedRoute(route, middlewares.toList(), content)
+        )
     }
 
     fun using(middleware: RouterMiddleware, builder: RouterBuilder.() -> Unit) {
@@ -51,7 +63,8 @@ class Router(private val mountedRoutes: List<MountedRoute>) {
 
     private val prefix = "#"
 
-    val current = Stream(MatchedRoute.default)
+    private val _current = WritableStream(ActiveRoute(MatchedRoute.default, MountedRoute.default))
+    val current: Stream<ActiveRoute> = _current
 
     init {
         window.addEventListener("DOMContentLoaded", ::windowListener)
@@ -75,11 +88,9 @@ class Router(private val mountedRoutes: List<MountedRoute>) {
 
                 mounted.middlewares.forEach { it(ctx) }
 
-                current.next(match)
+                _current.next(
+                    ActiveRoute(match, mounted)
+                )
             }
-
-        mountedRoutes.map { it.route.match(location) }.firstOrNull()?.let { match ->
-
-        }
     }
 }

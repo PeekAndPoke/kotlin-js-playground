@@ -4,11 +4,9 @@ import de.peekandpoke.kraft.vdom.VDomTagConsumer
 import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.js.onBlurFunction
-import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onClickFunction
-import kotlinx.html.js.onSubmitFunction
+import kotlinx.html.js.*
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 
 typealias RenderFn = FlowContent.() -> Unit
@@ -49,9 +47,28 @@ fun CommonAttributeGroupFacade.onClick(handler: (MouseEvent) -> Unit) {
 }
 
 /**
+ * onChange handler
+ */
+fun CommonAttributeGroupFacade.onKeyDown(handler: (KeyboardEvent) -> Unit) {
+    @Suppress("UNCHECKED_CAST", "USELESS_CAST")
+    onKeyDownFunction = handler as (Event) -> Unit
+}
+
+/**
+ * onChange handler
+ */
+fun CommonAttributeGroupFacade.onKeyUp(handler: (KeyboardEvent) -> Unit) {
+    @Suppress("UNCHECKED_CAST", "USELESS_CAST")
+    onKeyUpFunction = handler as (Event) -> Unit
+}
+
+/**
  * onSubmit handler
  */
 fun CommonAttributeGroupFacade.onSubmit(handler: (Event) -> Unit) {
     @Suppress("UNCHECKED_CAST", "USELESS_CAST")
-    onSubmitFunction = handler as (Event) -> Unit
+    onSubmitFunction = {
+        it.preventDefault()
+        handler(it)
+    }
 }

@@ -14,15 +14,16 @@ class LoginClient(private val baseUrl: String, private val codec: Json) {
     private val remote get() = remote("$baseUrl/adminusers")
 
     fun login(user: String, password: String): Flow<ApiResponse<LoginResponse>> =
-        remote.post(
-            url = "login",
-            body = codec.stringify(
-                ApiQueries.LoginWithPassword.serializer(),
-                ApiQueries.LoginWithPassword(user, password)
+        remote
+            .post(
+                url = "login",
+                body = codec.stringify(
+                    ApiQueries.LoginWithPassword.serializer(),
+                    ApiQueries.LoginWithPassword(user, password)
+                )
             )
-        ).onErrorLog()
-            .body().map {
-                codec.parse(ApiResponse.serializer(LoginResponse.serializer()), it)
-            }
+            .onErrorLog()
+            .body()
+            .map { codec.parse(ApiResponse.serializer(LoginResponse.serializer()), it) }
 
 }
