@@ -3,6 +3,7 @@ package de.peekandpoke.app.ui.pages.adminusers
 import de.peekandpoke.app.*
 import de.peekandpoke.app.domain.adminusers.AdminUserModel
 import de.peekandpoke.app.domain.adminusers.AdminUserStatus
+import de.peekandpoke.app.domain.adminusers.hasRole
 import de.peekandpoke.app.domain.domainCodec
 import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.CheckboxField
@@ -36,8 +37,8 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
 
     ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /** The user that is currently logged in */
-    private val loggedInUser by stream(AppState.user)
+    /** The permissions of the currently logged in user */
+    private val permissions by stream(AppState.permissions)
 
     /** The original version */
     private var original by property<AdminUserModel?>(null) { draft = it }
@@ -70,7 +71,7 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
             roles()
 
             // only super users can change the SuperUser role
-            if (loggedInUser.isSuperUser) {
+            if (permissions.isSuperUser) {
                 superUserRole()
             }
 
@@ -155,7 +156,7 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
                 ui.red.header H3 { +"Super User Rights" }
 
                 ui.form {
-                    if (isSuperUser) {
+                    if (hasRole(SuperUserRole)) {
                         ui.green.button {
                             +"Revoke Super User Rights"
                             onClick { draft = copy(roles = roles.minus(SuperUserRole)) }

@@ -45,7 +45,7 @@ class SidebarComponent(ctx: NoProps) : PureComponent(ctx) {
                 +"The Base"
             }
 
-            if (user.isSuperUser && selectableOrgs.size > 1) {
+            if (permissions.isSuperUser && selectableOrgs.size > 1) {
                 ui.form {
                     ui.grey.field {
                         select {
@@ -116,6 +116,7 @@ class SidebarComponent(ctx: NoProps) : PureComponent(ctx) {
                 }
 
                 administration()
+                cms()
                 demo()
             }
         }
@@ -157,9 +158,30 @@ class SidebarComponent(ctx: NoProps) : PureComponent(ctx) {
         }
     }
 
+    private fun FlowContent.cms() {
+        if (permissions.hasAnyRole(SuperUserRole, CmsRole)) {
+
+            MenuItem(
+                state = activeRoute.pattern,
+                title = {
+                    div {
+                        icon.file_alternate_outline()
+                        +"Cms"
+                    }
+                },
+                items = listOf<RenderFn> {
+                    ui.item.given(activeRoute.route == Nav.cmsPagesList) { active } A {
+                        href = Nav.cmsPagesList()
+                        +"Pages"
+                    }
+                }
+            )
+        }
+    }
+
     private fun FlowContent.demo() {
 
-        if (user.isSuperUser) {
+        if (permissions.isSuperUser) {
 
             MenuItem(
                 state = activeRoute.pattern,

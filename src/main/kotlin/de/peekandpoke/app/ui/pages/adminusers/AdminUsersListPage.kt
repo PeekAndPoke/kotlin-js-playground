@@ -26,14 +26,15 @@ class AdminUsersListPage(ctx: NoProps) : PureComponent(ctx) {
     ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private val selectedOrg by stream(AppState.selectedOrg) { reload() }
-    private var users by property<List<AdminUserModel>>(emptyList())
+
+    private var items by property<List<AdminUserModel>>(emptyList())
     private var search by property("") { reload() }
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun reload() {
         GlobalScope.launch {
-            Api.adminUsers.listInOrg(selectedOrg.id, search).collect { users = it.data!! }
+            Api.adminUsers.listInOrg(selectedOrg.id, search).collect { items = it.data!! }
         }
     }
 
@@ -75,7 +76,7 @@ class AdminUsersListPage(ctx: NoProps) : PureComponent(ctx) {
                 }
 
                 tbody {
-                    users.forEach { user ->
+                    items.forEach { user ->
                         tr {
                             td { +user.name }
                             td { +user.email }

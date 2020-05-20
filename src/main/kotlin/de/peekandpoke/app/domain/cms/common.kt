@@ -4,6 +4,12 @@ import de.peekandpoke.ultrajs.semanticui.SemanticColor
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class Link(
+    val title: String = "",
+    val url: LinkUrl = LinkUrl("")
+)
+
+@Serializable
 data class LinkUrl(val url: String = "")
 
 @Serializable

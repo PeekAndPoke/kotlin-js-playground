@@ -4,7 +4,7 @@ import de.peekandpoke.jshelper.encodeURIComponent
 import de.peekandpoke.kraft.store.Stream
 import de.peekandpoke.kraft.remote.remote
 
-abstract class AuthorizedClientBase(
+abstract class AuthorizedApiClientBase(
     private val baseUrl: String,
     private val token: Stream<String?>
 ) {

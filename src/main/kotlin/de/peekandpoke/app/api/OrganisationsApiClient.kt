@@ -11,11 +11,11 @@ import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
 
 
-class OrganisationsClient(
+class OrganisationsApiClient(
     baseUrl: String,
     token: Stream<String?>,
     private val codec: Json
-) : AuthorizedClientBase(baseUrl, token) {
+) : AuthorizedApiClientBase(baseUrl, token) {
 
     fun search(search: String = ""): Flow<ApiResponse<List<OrganisationModel>>> =
         remote

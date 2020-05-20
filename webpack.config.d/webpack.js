@@ -7,7 +7,7 @@ if (devServer) {
     devServer.overlay = true
     devServer.watchOptions = {
         aggregateTimeout: 500,
-        poll: 200
+        poll: 500
     };
     devServer.stats = {
         warnings: true

@@ -4,6 +4,8 @@ import de.peekandpoke.app.ui.pages.HomePage
 import de.peekandpoke.app.ui.pages.LoginPage
 import de.peekandpoke.app.ui.pages.adminusers.AdminUsersEditor
 import de.peekandpoke.app.ui.pages.adminusers.AdminUsersList
+import de.peekandpoke.app.ui.pages.cms.CmsPageEditor
+import de.peekandpoke.app.ui.pages.cms.CmsPagesList
 import de.peekandpoke.app.ui.pages.demo.CountersPage
 import de.peekandpoke.app.ui.pages.demo.RemotePage
 import de.peekandpoke.app.ui.pages.organisations.OrganisationEditor
@@ -19,6 +21,9 @@ object Nav {
 
     val adminUsersList = StaticRoute("/administration/adminusers")
     val adminUserEditor = ParameterizedRoute1("/administration/adminusers/{id}")
+
+    val cmsPagesList = StaticRoute("/cms/pages")
+    val cmsPageEditor = ParameterizedRoute1("/cms/pages/{id}")
 
     val organisationsList = StaticRoute("/administration/organisations")
     val organisationEditor = ParameterizedRoute1("/administration/organisations/{id}")
@@ -46,6 +51,9 @@ val mainRouter = router {
 
         mount(Nav.adminUsersList) { AdminUsersList() }
         mount(Nav.adminUserEditor) { AdminUsersEditor(it["id"]) }
+
+        mount(Nav.cmsPagesList) { CmsPagesList() }
+        mount(Nav.cmsPageEditor) { CmsPageEditor(it["id"]) }
 
         mount(Nav.organisationsList) { OrganisationsList() }
         mount(Nav.organisationEditor) { OrganisationEditor(it["id"]) }

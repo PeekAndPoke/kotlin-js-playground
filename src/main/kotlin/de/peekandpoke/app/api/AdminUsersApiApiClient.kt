@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
 
-class AdminUsersClient(
+class AdminUsersApiApiClient(
     baseUrl: String,
     token: Stream<String?>,
     private val codec: Json
-) : AuthorizedClientBase(baseUrl, token) {
+) : AuthorizedApiClientBase(baseUrl, token) {
 
     fun list(search: String = ""): Flow<ApiResponse<List<AdminUserModel>>> =
         remote

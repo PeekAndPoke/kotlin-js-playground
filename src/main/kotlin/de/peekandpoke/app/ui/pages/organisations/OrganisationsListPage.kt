@@ -24,7 +24,7 @@ class OrganisationsListPage(ctx: NoProps) : PureComponent(ctx) {
 
     ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private var organisations by property<List<OrganisationModel>>(emptyList())
+    private var items by property<List<OrganisationModel>>(emptyList())
     private var search by property("") { reload() }
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class OrganisationsListPage(ctx: NoProps) : PureComponent(ctx) {
 
     private fun reload() {
         GlobalScope.launch {
-            Api.organisations.search(search).collect { organisations = it.data!! }
+            Api.organisations.search(search).collect { items = it.data!! }
         }
     }
 
@@ -72,7 +72,7 @@ class OrganisationsListPage(ctx: NoProps) : PureComponent(ctx) {
                 }
 
                 tbody {
-                    organisations.forEach { org ->
+                    items.forEach { org ->
                         tr {
                             td { +org.name }
                             td {

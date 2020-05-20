@@ -1,7 +1,5 @@
 package de.peekandpoke.app
 
-import de.peekandpoke.app.domain.adminusers.AdminUserModel
-import de.peekandpoke.app.domain.adminusers.hasRole
 import de.peekandpoke.kraft.auth.Permissions
 import de.peekandpoke.kraft.auth.hasRole
 import de.peekandpoke.kraft.store.Stream
@@ -16,8 +14,8 @@ val Roles = listOf(
     CmsRole
 )
 
-/** Returns 'true' when the user has the SUPER_USER roles */
-val AdminUserModel?.isSuperUser: Boolean get() = hasRole(SuperUserRole)
+/** Returns 'true' when the current user has the SUPER_USER roles */
+val Permissions.isSuperUser: Boolean get() = hasRole(SuperUserRole)
 
 /** Returns 'true' when the current user has the SUPER_USER roles */
-val Stream<Permissions>.isSuperUser: Boolean get() = invoke().hasRole(SuperUserRole)
+val Stream<Permissions>.isSuperUser: Boolean get() = invoke().isSuperUser

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 
-class LoginClient(private val baseUrl: String, private val codec: Json) {
+class LoginApiClient(private val baseUrl: String, private val codec: Json) {
 
     private val remote get() = remote("$baseUrl/adminusers")
 
