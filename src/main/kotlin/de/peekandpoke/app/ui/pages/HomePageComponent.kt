@@ -7,9 +7,9 @@ import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.styling.css
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.kraft.vdom.custom
+import de.peekandpoke.ultrajs.semanticui.noui
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.Tag
-import kotlinx.html.div
 
 @Suppress("FunctionName")
 fun Tag.HomePage() = comp { HomePageComponent(it) }
@@ -21,11 +21,28 @@ class HomePageComponent(ctx: Ctx<Nothing?>) : PureComponent(ctx) {
 
             ui.basic.inverted.padded.blue.segment {
                 css(Theme.Pages.headerPadding)
-                ui.header H2 { +"Welcome to The Base" }
+                ui.header H1 { +"Welcome to The Base" }
             }
 
-            repeat(1000) {
-                div { +"Lorem Ipsum" }
+            ui.basic.segment {
+                ui.four.column.grid {
+                    repeat(16) {
+                        ui.column {
+                            ui.segment {
+                                ui.placeholder {
+                                    noui.image.header {
+                                        noui.line {}
+                                        noui.line {}
+                                    }
+                                    noui.paragraph {
+                                        noui.short.line {}
+                                        noui.medium.line {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

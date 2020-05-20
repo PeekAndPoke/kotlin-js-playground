@@ -60,7 +60,7 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
         ui.basic.inverted.blue.segment {
             css(Theme.Pages.headerPadding)
 
-            ui.header H2 {
+            ui.header H1 {
                 icon.small.edit()
                 +"Edit Admin User '${original?.name}'"
             }

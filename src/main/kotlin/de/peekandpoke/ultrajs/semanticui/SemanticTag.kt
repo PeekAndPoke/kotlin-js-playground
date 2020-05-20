@@ -71,6 +71,8 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
     @SemanticUiCssMarker val fixed get() = this + "fixed"
     @SemanticUiCssMarker val header get() = this + "header"
     @SemanticUiCssMarker val icon get() = this + "icon"
+    @SemanticUiCssMarker val image get() = this + "image"
+    @SemanticUiCssMarker val line get() = this + "line"
     @SemanticUiCssMarker val list get() = this + "list"
     @SemanticUiCssMarker val loading get() = this + "loading"
     @SemanticUiCssMarker val message get() = this + "message"
@@ -94,6 +96,7 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
     @SemanticUiCssMarker val meta get() = this + "meta"
     @SemanticUiCssMarker val dropdown get() = this + "dropdown"
     @SemanticUiCssMarker val sticky get() = this + "sticky"
+    @SemanticUiCssMarker val paragraph get() = this + "paragraph"
 
     // display sizes
 
@@ -200,6 +203,9 @@ class SemanticTag(private val parent: FlowContent, private val cssClasses: Mutab
 
 
     // size
+
+    @SemanticUiCssMarker val short get() = this + "short"
+    @SemanticUiCssMarker val long get() = this + "long"
 
     @SemanticUiCssMarker val mini get() = this + "mini"
     @SemanticUiCssMarker val tiny get() = this + "tiny"

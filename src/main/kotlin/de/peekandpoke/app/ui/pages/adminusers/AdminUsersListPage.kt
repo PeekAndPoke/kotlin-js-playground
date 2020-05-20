@@ -44,7 +44,7 @@ class AdminUsersListPage(ctx: NoProps) : PureComponent(ctx) {
             css(Theme.Pages.headerPadding)
             ui.three.column.grid {
                 ui.column {
-                    ui.header H2 {
+                    ui.header H1 {
                         css(Theme.Pages.whiteText)
                         +"Admin Users"
                     }

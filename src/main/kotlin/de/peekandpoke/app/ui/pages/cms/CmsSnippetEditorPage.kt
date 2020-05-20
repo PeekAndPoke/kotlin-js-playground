@@ -1,8 +1,8 @@
-package de.peekandpoke.app.ui.pages.organisations
+package de.peekandpoke.app.ui.pages.cms
 
 import de.peekandpoke.app.Api
+import de.peekandpoke.app.domain.cms.CmsSnippetModel
 import de.peekandpoke.app.domain.domainCodec
-import de.peekandpoke.app.domain.organisations.OrganisationModel
 import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.FormComponent
 import de.peekandpoke.app.ui.components.forms.TextField
@@ -21,9 +21,9 @@ import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 
 @Suppress("FunctionName")
-fun Tag.OrganisationEditor(id: String) = comp(OrganisationEditorPage.Props(id)) { OrganisationEditorPage(it) }
+fun Tag.CmsSnippetEditor(id: String) = comp(CmsSnippetEditorPage.Props(id)) { CmsSnippetEditorPage(it) }
 
-class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditorPage.Props>(ctx) {
+class CmsSnippetEditorPage(ctx: Ctx<Props>) : FormComponent<CmsSnippetEditorPage.Props>(ctx) {
 
     data class Props(
         val id: String
@@ -32,12 +32,12 @@ class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditor
     ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** The original version */
-    private var original by property<OrganisationModel?>(null) { draft = it }
+    private var original by property<CmsSnippetModel?>(null) { draft = it }
 
     /** The draft version that we are editing */
-    private var draft by property<OrganisationModel?>(null) {
+    private var draft by property<CmsSnippetModel?>(null) {
         it?.let {
-            console.log("Organisation draft", domainCodec.stringify(OrganisationModel.serializer(), it))
+            console.log("CmsSnippet draft", domainCodec.stringify(CmsSnippetModel.serializer(), it))
         }
     }
 
@@ -51,27 +51,34 @@ class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditor
         ui.basic.inverted.blue.segment {
             css(Theme.Pages.headerPadding)
 
-            ui.header H1 {
-                icon.small.edit()
-                +"Edit Organisation '${original?.name}'"
+            ui.grid {
+                ui.ten.wide.column {
+                    ui.header H1 {
+                        css(Theme.Pages.whiteText)
+                        icon.small.edit()
+                        +"Edit Cms Snippet '${original?.name}'"
+
+                    }
+                }
+                ui.right.aligned.six.wide.column {
+                    ui.inverted.button Button {
+                        +"Save"
+                        disabled = !isValid || original == draft
+                        onClick { save() }
+                    }
+                }
             }
         }
 
         ui.basic.segment {
             basicInfo()
-
-            ui.segment {
-                ui.button Button {
-                    +"Save"; disabled = !isValid; onClick { save() }
-                }
-            }
         }
     }
 
     private fun reload() {
         GlobalScope.launch {
-            Api.organisations
-                .get(props.id)
+            Api.cms
+                .getSnippet(props.id)
                 .collect { original = it.data!! }
         }
     }
@@ -79,8 +86,8 @@ class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditor
     private fun save() {
         draft?.let {
             GlobalScope.launch {
-                Api.organisations
-                    .save(it.id, it)
+                Api.cms
+                    .saveSnippet(it.id, it)
                     .collect { original = it.data!! }
             }
         }

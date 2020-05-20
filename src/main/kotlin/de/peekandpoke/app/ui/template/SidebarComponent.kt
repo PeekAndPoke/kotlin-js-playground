@@ -169,12 +169,26 @@ class SidebarComponent(ctx: NoProps) : PureComponent(ctx) {
                         +"Cms"
                     }
                 },
-                items = listOf<RenderFn> {
-                    ui.item.given(activeRoute.route == Nav.cmsPagesList) { active } A {
-                        href = Nav.cmsPagesList()
-                        +"Pages"
+                items = listOf<RenderFn>(
+                    {
+                        ui.item.given(activeRoute.route == Nav.cmsPagesList) { active } A {
+                            href = Nav.cmsPagesList()
+                            +"Pages"
+                        }
+                    },
+                    {
+                        ui.item.given(activeRoute.route == Nav.cmsMenusList) { active } A {
+                            href = Nav.cmsMenusList()
+                            +"Menus"
+                        }
+                    },
+                    {
+                        ui.item.given(activeRoute.route == Nav.cmsSnippetsList) { active } A {
+                            href = Nav.cmsSnippetsList()
+                            +"Snippets"
+                        }
                     }
-                }
+                )
             )
         }
     }

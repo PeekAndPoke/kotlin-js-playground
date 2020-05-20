@@ -2,7 +2,7 @@ package de.peekandpoke.app.ui.pages.cms
 
 import de.peekandpoke.app.Api
 import de.peekandpoke.app.Nav
-import de.peekandpoke.app.domain.cms.CmsPageModel
+import de.peekandpoke.app.domain.cms.CmsSnippetModel
 import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.TextField
 import de.peekandpoke.kraft.components.NoProps
@@ -18,13 +18,13 @@ import kotlinx.coroutines.launch
 import kotlinx.html.*
 
 @Suppress("FunctionName")
-fun Tag.CmsPagesList() = comp { CmsPagesListPage(it) }
+fun Tag.CmsSnippetsList() = comp { CmsSnippetsListPage(it) }
 
-class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
+class CmsSnippetsListPage(ctx: NoProps) : PureComponent(ctx) {
 
     ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private var items by property<List<CmsPageModel>>(emptyList())
+    private var items by property<List<CmsSnippetModel>>(emptyList())
     private var search by property("") { reload() }
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
 
     private fun reload() {
         GlobalScope.launch {
-            Api.cms.searchPages(search).collect { items = it.data!! }
+            Api.cms.searchSnippets(search).collect { items = it.data!! }
         }
     }
 
@@ -47,7 +47,7 @@ class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
                 ui.column {
                     ui.header H1 {
                         css(Theme.Pages.whiteText)
-                        +"Cms Pages"
+                        +"Cms Snippets"
                     }
                 }
 
@@ -67,10 +67,7 @@ class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
                 thead {
                     tr {
                         th { +"Name" }
-                        th { +"Uri" }
                         th { +"Tags" }
-                        th { +"Meta" }
-                        th { +"Alternate" }
                         th { +"Last update" }
                         th { +"Actions" }
                     }
@@ -83,42 +80,24 @@ class CmsPagesListPage(ctx: NoProps) : PureComponent(ctx) {
                                 +it.name
                             }
                             td {
-                                +it.uri
-                            }
-                            td {
                                 it.tags.split(" ").filter(String::isNotBlank).forEach {
                                     ui.label { +it }
                                 }
                             }
                             td {
-                                ui.list {
-                                    ui.item { +"Robots: ${it.meta.robots}" }
-                                    ui.item { +"Description: ${it.meta.description.take(30)}" }
-                                }
+                                // TODO
                             }
                             td {
-                                ui.list {
-                                    it.meta.alternateLanguages.forEach {
-                                        ui.item { +"${it.language} -> ${it.url.url}" }
-                                    }
-                                }
-                            }
-                            td {
-//                                ui.list {
-//                                    ui.item { +(it._meta?.ts?.updatedAt?.let { formatDateTime(it) } ?: "") }
-//                                    ui.item { +"by ${(it._meta?.user?.userId ?: "n/a")}" }
-//                                }
-                            }
-                            td {
+
                                 ui.basic.primary.icon.button A {
-                                    href = Nav.cmsPageEditor(it.id)
+                                    href = Nav.cmsSnippetEditor(it.id)
                                     icon.edit()
                                 }
 
-                                // TODO: we need to send the "Can-Delete" info with CmsPageModel
+                                // TODO: we need the can delete flag in the CmsSnippetModel
 //                                if (cms.canDelete(it)) {
-//                                    ui.red.inverted.icon.button A {
-//                                        href = routes.pages.delete(it).url
+//                                    ui.red.basic.icon.button A {
+//                                        href = routes.menus.delete(it).url
 //                                        icon.trash()
 //                                    }
 //                                }
