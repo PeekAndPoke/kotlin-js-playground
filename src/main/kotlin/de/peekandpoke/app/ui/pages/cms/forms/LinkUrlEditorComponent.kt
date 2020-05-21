@@ -1,7 +1,7 @@
 package de.peekandpoke.app.ui.pages.cms.forms
 
-import de.peekandpoke.app.domain.cms.Markdown
-import de.peekandpoke.app.ui.components.forms.TextAreaField
+import de.peekandpoke.app.domain.cms.LinkUrl
+import de.peekandpoke.app.ui.components.forms.TextField
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
@@ -9,22 +9,23 @@ import de.peekandpoke.kraft.vdom.VDom
 import kotlinx.html.Tag
 
 @Suppress("FunctionName")
-fun Tag.MarkdownEditor(label: String, item: Markdown, onChange: (Markdown) -> Unit) =
-    comp(MarkdownEditorComponent.Props(label, item, onChange)) { MarkdownEditorComponent(it) }
+fun Tag.LinkUrlEditor(label: String, item: LinkUrl, onChange: (LinkUrl) -> Unit) =
+    comp(LinkUrlEditorComponent.Props(label, item, onChange)) { LinkUrlEditorComponent(it) }
 
-class MarkdownEditorComponent(ctx: Ctx<Props>) : Component<MarkdownEditorComponent.Props>(ctx) {
+class LinkUrlEditorComponent(ctx: Ctx<Props>) : Component<LinkUrlEditorComponent.Props>(ctx) {
 
     data class Props(
         val label: String,
-        val item: Markdown,
-        val onChange: (Markdown) -> Unit
+        val item: LinkUrl,
+        val onChange: (LinkUrl) -> Unit
     )
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
         props.item.apply {
-            TextAreaField(content, { props.onChange(copy(content = it)) }) {
+            // TODO: check if the uri is valid
+            TextField(url, { props.onChange(copy(url = it)) }) {
                 label = props.label
             }
         }

@@ -1,12 +1,9 @@
 package de.peekandpoke.app.ui.pages.cms.forms
 
 import de.peekandpoke.app.domain.cms.CmsPageModel
-import de.peekandpoke.app.ui.components.forms.CheckboxField
-import de.peekandpoke.app.ui.components.forms.SelectField
-import de.peekandpoke.app.ui.components.forms.TextField
+import de.peekandpoke.app.ui.components.forms.*
 import de.peekandpoke.app.ui.components.forms.validation.NotBlank
-import de.peekandpoke.app.utils.modifyAt
-import de.peekandpoke.app.utils.removeAt
+import de.peekandpoke.app.ui.components.forms.validation.NotEmpty
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
@@ -16,7 +13,7 @@ import de.peekandpoke.ultrajs.semanticui.icon
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.title
+import kotlinx.html.div
 
 @Suppress("FunctionName")
 fun Tag.CmsPageMetaForm(meta: CmsPageModel.Meta, onChange: (CmsPageModel.Meta) -> Unit) =
@@ -29,47 +26,46 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
         val onChange: (CmsPageModel.Meta) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.original) {
-        // Propagate changes to outer forms
-        props.onChange(it)
-    }
-
     // TODO: make the language options configurable
     private val languageOptions: SelectField.PropsBuilder<String>.() -> Unit = {
-        option("en", "en") { +"en" }
-        option("de", "de") { +"de" }
+        option("", "") { +"---" }
+        option("en") { +"en" }
+        option("de") { +"de" }
     }
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
 
-        ui.header H3 { +"Meta data" }
+        div {
+            // TODO: fix this by using a ListField for the alternateLanguages
+//            attributes["key"] = draft.hashCode().toString()
 
-        ui.form {
-            basics()
-            alternateLanguages()
+            ui.header H3 { +"Meta data" }
+
+            ui.form {
+                basics()
+                alternateLanguages()
+            }
         }
     }
 
     private fun FlowContent.basics() {
 
-        draft.apply {
+        props.original.apply {
             ui.fields {
-                TextField({ description }, { draft = copy(description = it) }) {
+                TextField(description, { props.onChange(copy(description = it)) }) {
                     label = "Description"
                     appearance = { ten.wide }
                     accepts(NotBlank)
                 }
 
-                CheckboxField({ robotsIndex }, { draft = copy(robotsIndex = it) }) {
+                CheckboxField(robotsIndex, { props.onChange(copy(robotsIndex = it)) }) {
                     label = "Robots Index"
                     appearance = { three.wide }
                 }
 
-                CheckboxField({ robotsFollow }, { draft = copy(robotsFollow = it) }) {
+                CheckboxField(robotsFollow, { props.onChange(copy(robotsFollow = it)) }) {
                     label = "Robots Follow"
                     appearance = { three.wide }
                 }
@@ -78,22 +74,24 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
     }
 
     private fun FlowContent.alternateLanguages() {
-        draft.apply {
+        props.original.apply {
             ui.header H3 { +"Alternate Languages" }
 
             ui.basic.segment {
                 ui.four.column.grid {
-                    // Render all alternate language entries
-                    alternateLanguages.forEachIndexed { idx, alt -> renderAlternateLanguage(idx, alt) }
 
-                    // Render the add alternate language button
-                    ui.column {
-                        ui.placeholder.raised.segment {
-                            ui.icon.header { icon.plus() }
-                            onClick {
-                                draft = copy(
-                                    alternateLanguages = alternateLanguages.plus(CmsPageModel.AlternateLanguage())
-                                )
+                    ListField(alternateLanguages, { props.onChange(copy(alternateLanguages = it)) }) {
+                        renderItem { ctx ->
+                            renderAlternateLanguage(ctx)
+                        }
+                        renderAdd { ctx ->
+                            ui.column {
+                                ui.placeholder.raised.segment {
+                                    ui.icon.header { icon.plus() }
+                                    onClick {
+                                        ctx.add(CmsPageModel.AlternateLanguage())
+                                    }
+                                }
                             }
                         }
                     }
@@ -102,48 +100,26 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
         }
     }
 
-    private fun FlowContent.renderAlternateLanguage(index: Int, alternate: CmsPageModel.AlternateLanguage) {
+    private fun FlowContent.renderAlternateLanguage(
+        ctx: ListFieldComponent.ItemContext<CmsPageModel.AlternateLanguage>
+    ) {
 
-        ui.column {
-            ui.top.attached.segment {
-                SelectField(
-                    { alternate.language },
-                    { new ->
-                        draft = draft.copy(
-                            alternateLanguages = draft.alternateLanguages.modifyAt(index) {
-                                it.copy(language = new)
-                            }
-                        )
+        ctx.item.apply {
+
+            ui.column {
+                ui.top.attached.segment {
+                    SelectField(language, { ctx.modify(copy(language = it)) }) {
+                        label = "Language"
+                        languageOptions()
+                        accepts(NotEmpty)
                     }
-                ) {
-                    label = "Language"
-                    languageOptions()
+
+                    LinkUrlEditor("Url", url) { ctx.modify(copy(url = it)) }
                 }
 
-                TextField(
-                    { alternate.url.url },
-                    { new ->
-                        draft = draft.copy(
-                            alternateLanguages = draft.alternateLanguages.modifyAt(index) { alt ->
-                                alt.copy(url = alt.url.copy(url = new))
-                            }
-                        )
-                    }
-                ) {
-                    // TODO: we need an UrlInputField ... that also checks if the url is valid
-                    accepts(NotBlank)
-                    label = "Url"
-                }
-            }
-
-            ui.bottom.attached.segment {
-                ui.fluid.icon.button {
-                    title = "Remove"
-                    icon.close()
-                    onClick {
-                        draft = draft.copy(
-                            alternateLanguages = draft.alternateLanguages.removeAt(index)
-                        )
+                ui.bottom.attached.segment {
+                    ui.basic.fluid.buttons {
+                        leftRemoveRightButtons(ctx)
                     }
                 }
             }

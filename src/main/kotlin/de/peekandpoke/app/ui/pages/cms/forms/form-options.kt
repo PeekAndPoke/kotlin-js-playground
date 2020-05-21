@@ -1,6 +1,7 @@
 package de.peekandpoke.app.ui.pages.cms.forms
 
 import de.peekandpoke.app.ui.components.forms.SelectField
+import de.peekandpoke.app.ui.pages.cms.common.TheBaseIcon
 import de.peekandpoke.ultrajs.semanticui.SemanticColor
 
 fun SelectField.PropsBuilder<SemanticColor>.colorOptions() {
@@ -26,4 +27,20 @@ fun SelectField.PropsBuilder<String>.patternOptions() {
     option("divider004") { +"Divider #4" }
     option("divider005") { +"Divider #5" }
     option("divider006") { +"Divider #6" }
+}
+
+fun SelectField.PropsBuilder<String>.iconOptions() {
+
+    TheBaseIcon.Name.values().forEach { iconName ->
+
+        option("tb-icon ${iconName.cls}") {
+            +iconName.cls
+        }
+
+//        div(classes = "item") {
+//            attributes["data-value"] = "tb-icon ${iconName.cls}"
+//            icon.tb.render(iconName)
+//            +iconName.cls.replace('-', ' ')
+//        }
+    }
 }

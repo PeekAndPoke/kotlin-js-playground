@@ -17,32 +17,32 @@ fun <T> Tag.SelectField(
     prop: KMutableProperty0<T>,
     customize: SelectField.PropsBuilder<T>.() -> Unit
 ) = comp(
-    SelectField.PropsBuilder({ prop.get() }, { prop.set(it) }).apply(customize).build()
+    SelectField.PropsBuilder(prop.get(), { prop.set(it) }).apply(customize).build()
 ) { SelectField(it) }
 
 @Suppress("FunctionName")
 fun <T> Tag.SelectField(
-    getter: () -> T,
-    setter: (T) -> Unit,
+    original: T,
+    onChange: (T) -> Unit,
     customize: SelectField.PropsBuilder<T>.() -> Unit
 ) = comp(
-    SelectField.PropsBuilder(getter, setter).apply(customize).build()
+    SelectField.PropsBuilder(original, onChange).apply(customize).build()
 ) { SelectField(it) }
 
 
 class SelectField<T>(ctx: Ctx<Props<T>>) : Component<SelectField.Props<T>>(ctx) {
 
     class PropsBuilder<T>(
-        private val getter: () -> T,
-        private val setter: (T) -> Unit,
+        private val original: T,
+        private val onChange: (T) -> Unit,
         private val accepts: MutableList<Rule<String>> = mutableListOf(),
         var label: String = "",
         var appearance: SemanticTag.() -> SemanticTag = { this },
         private val options: MutableList<Option<T>> = mutableListOf()
     ) {
         fun build() = Props(
-            getter = getter,
-            setter = setter,
+            original = original,
+            onChange = onChange,
             accepts = accepts,
             label = label,
             appearance = appearance,
@@ -67,8 +67,8 @@ class SelectField<T>(ctx: Ctx<Props<T>>) : Component<SelectField.Props<T>>(ctx) 
     )
 
     data class Props<T>(
-        val getter: () -> T,
-        val setter: (T) -> Unit,
+        val original: T,
+        val onChange: (T) -> Unit,
         val accepts: List<Rule<String>> = emptyList(),
         val label: String,
         val appearance: SemanticTag.() -> SemanticTag,
@@ -81,9 +81,13 @@ class SelectField<T>(ctx: Ctx<Props<T>>) : Component<SelectField.Props<T>>(ctx) 
 
     ////  IMPL   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    override fun onRemove() {
+        send(ValidInputMessage(this))
+    }
+
     override fun VDom.render() {
 
-        val currentValue = props.getter()
+        val currentValue = props.original
 
         ui.with(props.appearance).field {
             label {
@@ -119,11 +123,9 @@ class SelectField<T>(ctx: Ctx<Props<T>>) : Component<SelectField.Props<T>>(ctx) 
             send(InvalidInputMessage(this))
         }
 
-        // finally when there are no errors, propagate the value
-        if (errors.isEmpty()) {
-            props.options
-                .firstOrNull { it.formValue == input }
-                ?.let { props.setter(it.realValue) }
-        }
+        // finally we propagate the value
+        props.options
+            .firstOrNull { it.formValue == input }
+            ?.let { props.onChange(it.realValue) }
     }
 }

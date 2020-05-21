@@ -21,15 +21,9 @@ class XxxElementEditor(ctx: Ctx<Props>): Component<XxxElementEditor.Props>(ctx) 
         val onChange: (CmsElement) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.item) { props.onChange(it) }
-
-    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     override fun VDom.render() {
         ui.segment {
-            ui.header H5 { +props.item.elementDescription }
+            ui.header H4 { +props.item.elementDescription }
         }
     }
 }

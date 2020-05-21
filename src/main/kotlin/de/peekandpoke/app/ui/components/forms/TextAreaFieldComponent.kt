@@ -18,31 +18,31 @@ fun Tag.TextAreaField(
     prop: KMutableProperty0<String>,
     customize: TextAreaFieldComponent.PropsBuilder.() -> Unit
 ) = comp(
-    TextAreaFieldComponent.PropsBuilder({ prop.get() }, { prop.set(it) }).apply(customize).build()
+    TextAreaFieldComponent.PropsBuilder(prop.get(), { prop.set(it) }).apply(customize).build()
 ) { TextAreaFieldComponent(it) }
 
 @Suppress("FunctionName")
 fun Tag.TextAreaField(
-    getter: () -> String,
-    setter: (String) -> Unit,
+    original: String,
+    onChange: (String) -> Unit,
     customize: TextAreaFieldComponent.PropsBuilder.() -> Unit
 ) = comp(
-    TextAreaFieldComponent.PropsBuilder(getter, setter).apply(customize).build()
+    TextAreaFieldComponent.PropsBuilder(original, onChange).apply(customize).build()
 ) { TextAreaFieldComponent(it) }
 
 class TextAreaFieldComponent(ctx: Ctx<Props>) : FormFieldBase<TextAreaFieldComponent.Props>(ctx) {
 
     class PropsBuilder(
-        private val getter: () -> String,
-        private val setter: (String) -> Unit,
+        private val original: String,
+        private val onChange: (String) -> Unit,
         private val accepts: MutableList<Rule<String>> = mutableListOf(),
         var label: String = "",
         var placeholder: String = "",
         var appearance: SemanticTag.() -> SemanticTag = { this }
     ) {
         fun build() = Props(
-            getter = getter,
-            setter = setter,
+            original = original,
+            onChange = onChange,
             accepts = accepts,
             label = label,
             placeholder = placeholder,
@@ -53,13 +53,17 @@ class TextAreaFieldComponent(ctx: Ctx<Props>) : FormFieldBase<TextAreaFieldCompo
     }
 
     data class Props(
-        override val getter: () -> String,
-        override val setter: (String) -> Unit,
+        override val original: String,
+        override val onChange: (String) -> Unit,
         override val accepts: List<Rule<String>> = emptyList(),
         val label: String,
         val placeholder: String,
         val appearance: SemanticTag.() -> SemanticTag
     ) : FormFieldBase.Props
+
+    override fun onRemove() {
+        send(ValidInputMessage(this))
+    }
 
     override fun VDom.render() {
 
@@ -68,11 +72,16 @@ class TextAreaFieldComponent(ctx: Ctx<Props>) : FormFieldBase<TextAreaFieldCompo
                 +props.label
 
                 textArea {
-                    +input
-                    placeholder = props.placeholder
-                    onKeyUp { onInput((it.target as HTMLTextAreaElement).value) }
+                    +props.original
+
+                    if (props.placeholder.isNotBlank()) {
+                        placeholder = props.placeholder
+                    }
+
+                    onKeyUp { validate((it.target as HTMLTextAreaElement).value) }
                 }
             }
+
             if (errors.isNotEmpty()) {
                 errors.forEach { error ->
                     ui.basic.red.pointing.label { +error }

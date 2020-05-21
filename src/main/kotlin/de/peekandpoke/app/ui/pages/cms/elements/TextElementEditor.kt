@@ -2,7 +2,7 @@ package de.peekandpoke.app.ui.pages.cms.elements
 
 import de.peekandpoke.app.domain.cms.elements.CmsElement
 import de.peekandpoke.app.domain.cms.elements.TextElement
-import de.peekandpoke.app.ui.components.forms.TextField
+import de.peekandpoke.app.ui.components.forms.TextAreaField
 import de.peekandpoke.app.ui.pages.cms.forms.ElementPaddingEditor
 import de.peekandpoke.app.ui.pages.cms.forms.ElementStyleEditor
 import de.peekandpoke.app.ui.pages.cms.forms.MarkdownEditor
@@ -24,28 +24,26 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
         val onChange: (CmsElement) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.item) { props.onChange(it) }
-
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        draft.apply {
+        props.item.apply {
             ui.segment {
-                ui.header H5 { +props.item.elementDescription }
+                ui.header H4 { +props.item.elementDescription }
 
                 ui.form {
                     ui.four.fields {
-                        ElementStyleEditor(styling) { draft = copy(styling = it) }
-                        ElementPaddingEditor(padding) { draft = copy(padding = it) }
+                        ElementStyleEditor(styling) { props.onChange(copy(styling = it)) }
+                        ElementPaddingEditor(padding) { props.onChange(copy(padding = it)) }
                     }
 
-                    TextField({ headline }, { draft = copy(headline = it) }) {
-                        label = "Headline"
-                    }
+                    ui.three.fields {
+                        TextAreaField(headline, { props.onChange(copy(headline = it)) }) {
+                            label = "Headline"
+                        }
 
-                    MarkdownEditor("Text", text) { draft = copy(text = it) }
+                        MarkdownEditor("Text", text) { props.onChange(copy(text = it)) }
+                    }
                 }
             }
         }

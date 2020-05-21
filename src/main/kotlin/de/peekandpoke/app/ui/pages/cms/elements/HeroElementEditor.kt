@@ -3,15 +3,14 @@ package de.peekandpoke.app.ui.pages.cms.elements
 import de.peekandpoke.app.domain.cms.elements.CmsElement
 import de.peekandpoke.app.domain.cms.elements.HeroElement
 import de.peekandpoke.app.ui.components.forms.SelectField
-import de.peekandpoke.app.ui.components.forms.TextField
-import de.peekandpoke.app.ui.pages.cms.forms.ElementStyleEditor
-import de.peekandpoke.app.ui.pages.cms.forms.MarkdownEditor
-import de.peekandpoke.app.ui.pages.cms.forms.patternOptions
+import de.peekandpoke.app.ui.components.forms.TextAreaField
+import de.peekandpoke.app.ui.pages.cms.forms.*
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
+import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 
 @Suppress("FunctionName")
@@ -25,39 +24,69 @@ class HeroElementEditor(ctx: Ctx<Props>) : Component<HeroElementEditor.Props>(ct
         val onChange: (CmsElement) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.item) { props.onChange(it) }
-
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        draft.apply {
+
+        props.item.apply {
             ui.segment {
-                ui.header H5 { +props.item.elementDescription }
+                ui.header H4 { +props.item.elementDescription }
 
                 ui.form {
-                    ui.four.fields {
-                        ElementStyleEditor(styling) { draft = copy(styling = it) }
-
-                        SelectField({ layout }, { draft = copy(layout = it) }) {
-                            label = "Layout"
-                            option(HeroElement.Layout.FullSizeImage) { +"Full Size Image" }
-                            option(HeroElement.Layout.ImageRight) { +"Image on the right" }
-                        }
-
-                        SelectField({ pattern }, { draft = copy(pattern = it) }) {
-                            label = "Pattern"
-                            patternOptions()
-                        }
-                    }
-
-                    TextField({ headline }, { draft = copy(headline = it) }) {
-                        label = "Headline"
-                    }
-
-                    MarkdownEditor("Text", text) { draft = copy(text = it) }
+                    basics()
+                    ui.divider {}
+                    cta()
+                    ui.divider {}
+                    images()
                 }
+            }
+        }
+    }
+
+    private fun FlowContent.basics() {
+
+        props.item.apply {
+            ui.four.fields {
+                ElementStyleEditor(styling) { props.onChange(copy(styling = it)) }
+
+                SelectField(layout, { props.onChange(copy(layout = it)) }) {
+                    label = "Layout"
+                    option(HeroElement.Layout.FullSizeImage) { +"Full Size Image" }
+                    option(HeroElement.Layout.ImageRight) { +"Image on the right" }
+                }
+
+                SelectField(pattern, { props.onChange(copy(pattern = it)) }) {
+                    label = "Pattern"
+                    patternOptions()
+                }
+            }
+
+            ui.three.fields {
+                TextAreaField(headline, { props.onChange(copy(headline = it)) }) {
+                    label = "Headline"
+                }
+
+                MarkdownEditor("Text", text) { props.onChange(copy(text = it)) }
+            }
+        }
+    }
+
+    private fun FlowContent.cta() {
+        props.item.apply {
+            ui.header H5 { +"CTA" }
+
+            ui.five.fields {
+                CallToActionEditor(cta) { props.onChange(copy(cta = it)) }
+            }
+        }
+    }
+
+    private fun FlowContent.images() {
+        props.item.apply {
+            ui.header H5 { +"Images" }
+
+            ui.four.column.grid {
+                ImageListEditor(images) { props.onChange(copy(images = it)) }
             }
         }
     }

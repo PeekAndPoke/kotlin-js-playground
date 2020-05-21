@@ -13,9 +13,13 @@ abstract class FormComponent<PROPS>(ctx: Ctx<PROPS>): Component<PROPS>(ctx) {
     init {
         events.stream {
             when (it) {
-                is InvalidInputMessage -> invalidFields.add(it.sender)
+                is InvalidInputMessage -> {
+                    invalidFields.add(it.sender)
+                }
 
-                is ValidInputMessage -> invalidFields.remove(it.sender)
+                is ValidInputMessage -> {
+                    invalidFields.remove(it.sender)
+                }
             }
         }
     }

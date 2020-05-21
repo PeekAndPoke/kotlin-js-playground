@@ -19,19 +19,15 @@ class ElementStyleEditorComponent(ctx: Ctx<Props>) : Component<ElementStyleEdito
         val onChange: (ElementStyle) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.item) { props.onChange(it) }
-
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        draft.apply {
-            SelectField({ textColor }, { draft = copy(textColor = it)}) {
+        props.item.apply {
+            SelectField(textColor, { props.onChange(copy(textColor = it)) }) {
                 label = "Text color"
                 colorOptions()
             }
-            SelectField({ backgroundColor }, { draft = copy(backgroundColor = it)}) {
+            SelectField(backgroundColor, { props.onChange(copy(backgroundColor = it)) }) {
                 label = "Background color"
                 colorOptions()
             }

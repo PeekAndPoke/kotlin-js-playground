@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.CmsMenuEditor(id: String) = comp(CmsMenuEditorPage.Props(id)) { CmsMenuEditorPage(it) }
@@ -99,7 +98,7 @@ class CmsMenuEditorPage(ctx: Ctx<Props>) : FormComponent<CmsMenuEditorPage.Props
                 ui.form {
                     ui.three.fields {
 
-                        TextField({ name }, { draft = copy(name = it) }) {
+                        TextField(name, { draft = copy(name = it) }) {
                             label = "Name"
                             accepts(NotBlank)
                         }

@@ -21,13 +21,6 @@ class LandingPageLayoutEditor(ctx: Ctx<Props>) : Component<LandingPageLayoutEdit
         val onChange: (LandingPageLayout) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.original) {
-        // Propagate changes to outer forms
-        props.onChange(it)
-    }
-
     ////  IMPL   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
@@ -36,11 +29,15 @@ class LandingPageLayoutEditor(ctx: Ctx<Props>) : Component<LandingPageLayoutEdit
                 ui.header H3 { +"Landing Page Layout" }
             }
 
-            draft.elements.forEachIndexed { idx, element ->
-                CmsElementEditor(element) { modified ->
-                    draft = draft.copy(
-                        elements = draft.elements.modifyAt(idx) { modified }
-                    )
+            props.original.apply {
+
+                elements.forEachIndexed { idx, element ->
+
+                    CmsElementEditor(element) { modified ->
+                        props.onChange(
+                            copy(elements = elements.modifyAt(idx) { modified })
+                        )
+                    }
                 }
             }
         }

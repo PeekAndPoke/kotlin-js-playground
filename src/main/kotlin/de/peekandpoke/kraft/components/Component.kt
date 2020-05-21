@@ -16,19 +16,25 @@ abstract class Component<PROPS>(val ctx: Ctx<PROPS>) {
 
     /** The parent component */
     private val parent: Component<*>? = ctx.parent
+
     /** Backing field for the Props */
     private var _props: PROPS = ctx.props
+
     /** Flag indicating if the component needs a redraw */
     private var needsRedraw = true
+
     /** Render cache with the last render result */
     private var renderCache: Any? = null
+
     /** A list of stream unsubscribe functions. Will be call when the component is removed */
     private val unSubscribers = mutableListOf<() -> Unit>()
 
     /** Public getter for the Props */
     val props: PROPS get() = _props
+
     /** Message system for child to parent component communication */
     val events = Messages()
+
     /** The Dom node to which the component is rendered */
     var dom: Element? = null
 
@@ -68,7 +74,11 @@ abstract class Component<PROPS>(val ctx: Ctx<PROPS>) {
         // We do not dispatch the message on the component that sent it
         if (message.sender != this) {
             events.send(message)
+        } else {
+            // but we will trigger a redraw
+            triggerRedraw()
         }
+
         // Continue with the parent if the message was not stopped
         if (parent != null && !message.isStopped) {
             parent.send(message)

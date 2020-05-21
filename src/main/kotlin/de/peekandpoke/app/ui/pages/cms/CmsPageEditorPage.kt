@@ -3,7 +3,6 @@ package de.peekandpoke.app.ui.pages.cms
 import de.peekandpoke.app.Api
 import de.peekandpoke.app.domain.cms.CmsPageModel
 import de.peekandpoke.app.domain.cms.layouts.LandingPageLayout
-import de.peekandpoke.app.domain.domainCodec
 import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.FormComponent
 import de.peekandpoke.app.ui.components.forms.TextField
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 import kotlinx.html.p
 
 @Suppress("FunctionName")
@@ -41,9 +39,9 @@ class CmsPageEditorPage(ctx: Ctx<Props>) : FormComponent<CmsPageEditorPage.Props
 
     /** The draft version that we are editing */
     private var draft by property<CmsPageModel?>(null) {
-        it?.let {
-            console.log("CmsPage draft", domainCodec.stringify(CmsPageModel.serializer(), it))
-        }
+//        it?.let {
+//            console.log("CmsPage draft", domainCodec.stringify(CmsPageModel.serializer(), it))
+//        }
     }
 
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,16 +117,16 @@ class CmsPageEditorPage(ctx: Ctx<Props>) : FormComponent<CmsPageEditorPage.Props
             ui.segment {
                 ui.form {
                     ui.three.fields {
-                        TextField({ name }, { draft = copy(name = it) }) {
+                        TextField(name, { draft = copy(name = it) }) {
                             label = "Name"
                             accepts(NotBlank)
                         }
-                        TextField({ uri }, { draft = copy(uri = it) }) {
+                        TextField(uri, { draft = copy(uri = it) }) {
                             label = "Uri"
                             // TODO: Validate that the uri does not yet exist
                             accepts(NotBlank)
                         }
-                        TextField({ tags }, { draft = copy(tags = it) }) {
+                        TextField(tags, { draft = copy(tags = it) }) {
                             label = "Tags"
                             accepts(NotBlank)
                         }

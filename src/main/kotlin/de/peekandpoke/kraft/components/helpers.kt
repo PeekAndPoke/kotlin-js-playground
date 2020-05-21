@@ -23,6 +23,15 @@ fun <P> Tag.comp(props: P, component: (Ctx<P>) -> Component<P>) =
 fun Tag.comp(component: (NoProps) -> Component<Nothing?>) = comp(null, component)
 
 /**
+ * Markup Element key
+ */
+var CommonAttributeGroupFacade.key: String
+    get() = attributes["key"] ?: ""
+    set(value) {
+        attributes["key"] = value
+    }
+
+/**
  * onChange handler
  */
 fun CommonAttributeGroupFacade.onBlur(handler: (Event) -> Unit) {

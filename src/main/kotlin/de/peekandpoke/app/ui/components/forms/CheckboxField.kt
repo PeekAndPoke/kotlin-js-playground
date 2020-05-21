@@ -1,10 +1,7 @@
 package de.peekandpoke.app.ui.components.forms
 
 import de.peekandpoke.app.ui.components.forms.validation.Rule
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
-import de.peekandpoke.kraft.components.comp
-import de.peekandpoke.kraft.components.onChange
+import de.peekandpoke.kraft.components.*
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.SemanticTag
 import de.peekandpoke.ultrajs.semanticui.ui
@@ -20,31 +17,31 @@ fun Tag.CheckboxField(
     prop: KMutableProperty0<Boolean>,
     customize: CheckboxField.PropsBuilder.() -> Unit
 ) = comp(
-    CheckboxField.PropsBuilder({ prop.get() }, { prop.set(it) }).apply(customize).build()
+    CheckboxField.PropsBuilder(prop.get(), { prop.set(it) }).apply(customize).build()
 ) { CheckboxField(it) }
 
 @Suppress("FunctionName")
 fun Tag.CheckboxField(
-    getter: () -> Boolean,
-    setter: (Boolean) -> Unit,
+    original: Boolean,
+    onChange: (Boolean) -> Unit,
     customize: CheckboxField.PropsBuilder.() -> Unit
 ) = comp(
-    CheckboxField.PropsBuilder(getter, setter).apply(customize).build()
+    CheckboxField.PropsBuilder(original, onChange).apply(customize).build()
 ) { CheckboxField(it) }
 
 
 class CheckboxField(ctx: Ctx<Props>) : Component<CheckboxField.Props>(ctx) {
 
     class PropsBuilder(
-        private val getter: () -> Boolean,
-        private val setter: (Boolean) -> Unit,
+        private val original: Boolean,
+        private val onChange: (Boolean) -> Unit,
         private val accepts: MutableList<Rule<Boolean>> = mutableListOf(),
         var label: String = "",
         var appearance: SemanticTag.() -> SemanticTag = { this }
     ) {
         fun build() = Props(
-            getter = getter,
-            setter = setter,
+            original = original,
+            onChange = onChange,
             accepts = accepts,
             label = label,
             appearance = appearance
@@ -54,8 +51,8 @@ class CheckboxField(ctx: Ctx<Props>) : Component<CheckboxField.Props>(ctx) {
     }
 
     data class Props(
-        val getter: () -> Boolean,
-        val setter: (Boolean) -> Unit,
+        val original: Boolean,
+        val onChange: (Boolean) -> Unit,
         val accepts: List<Rule<Boolean>> = emptyList(),
         val label: String,
         val appearance: SemanticTag.() -> SemanticTag
@@ -73,11 +70,14 @@ class CheckboxField(ctx: Ctx<Props>) : Component<CheckboxField.Props>(ctx) {
             ui.toggle.checkbox {
                 input {
                     type = InputType.checkBox
-                    checked = props.getter()
+                    checked = props.original
                     value = "1"
                     onChange { onInput((it.target as HTMLInputElement).checked) }
                 }
-                label { +props.label }
+                label {
+                    onClick { onInput(!props.original) }
+                    +props.label
+                }
             }
 
             if (errors.isNotEmpty()) {
@@ -102,7 +102,7 @@ class CheckboxField(ctx: Ctx<Props>) : Component<CheckboxField.Props>(ctx) {
 
         // finally when there are no errors, propagate the value
         if (errors.isEmpty()) {
-            props.setter(checked)
+            props.onChange(checked)
         }
     }
 }

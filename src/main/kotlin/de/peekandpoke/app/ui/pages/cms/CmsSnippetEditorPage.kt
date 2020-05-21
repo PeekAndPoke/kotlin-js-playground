@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.CmsSnippetEditor(id: String) = comp(CmsSnippetEditorPage.Props(id)) { CmsSnippetEditorPage(it) }
@@ -99,7 +98,7 @@ class CmsSnippetEditorPage(ctx: Ctx<Props>) : FormComponent<CmsSnippetEditorPage
                 ui.form {
                     ui.three.fields {
 
-                        TextField({ name }, { draft = copy(name = it) }) {
+                        TextField(name, { draft = copy(name = it) }) {
                             label = "Name"
                             accepts(NotBlank)
                         }

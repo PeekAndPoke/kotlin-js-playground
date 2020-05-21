@@ -3,14 +3,12 @@ package de.peekandpoke.app.ui.pages.organisations
 import de.peekandpoke.app.Api
 import de.peekandpoke.app.domain.domainCodec
 import de.peekandpoke.app.domain.organisations.OrganisationModel
-import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.FormComponent
 import de.peekandpoke.app.ui.components.forms.TextField
 import de.peekandpoke.app.ui.components.forms.validation.NotBlank
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
-import de.peekandpoke.kraft.styling.css
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.icon
 import de.peekandpoke.ultrajs.semanticui.ui
@@ -19,7 +17,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.OrganisationEditor(id: String) = comp(OrganisationEditorPage.Props(id)) { OrganisationEditorPage(it) }
@@ -92,7 +89,7 @@ class OrganisationEditorPage(ctx: Ctx<Props>) : FormComponent<OrganisationEditor
                 ui.form {
                     ui.three.fields {
 
-                        TextField({ name }, { draft = copy(name = it) }) {
+                        TextField(name, { draft = copy(name = it) }) {
                             label = "Name"
                             accepts(NotBlank)
                         }

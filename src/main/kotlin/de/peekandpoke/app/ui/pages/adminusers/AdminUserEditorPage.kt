@@ -5,7 +5,6 @@ import de.peekandpoke.app.domain.adminusers.AdminUserModel
 import de.peekandpoke.app.domain.adminusers.AdminUserStatus
 import de.peekandpoke.app.domain.adminusers.hasRole
 import de.peekandpoke.app.domain.domainCodec
-import de.peekandpoke.app.ui.Theme
 import de.peekandpoke.app.ui.components.forms.CheckboxField
 import de.peekandpoke.app.ui.components.forms.FormComponent
 import de.peekandpoke.app.ui.components.forms.SelectField
@@ -16,7 +15,6 @@ import de.peekandpoke.app.ui.components.forms.validation.ValidEmail
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.components.onClick
-import de.peekandpoke.kraft.styling.css
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.icon
 import de.peekandpoke.ultrajs.semanticui.ui
@@ -25,7 +23,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.AdminUsersEditor(id: String) = comp(AdminUserEditorPage.Props(id)) { AdminUserEditorPage(it) }
@@ -106,17 +103,17 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
                 ui.form {
                     ui.three.fields {
 
-                        TextField({ email }, { draft = copy(email = it) }) {
+                        TextField(email, { draft = copy(email = it) }) {
                             label = "Email"
                             accepts(ValidEmail)
                         }
 
-                        TextField({ name }, { draft = copy(name = it) }) {
+                        TextField(name, { draft = copy(name = it) }) {
                             label = "Name"
                             accepts(NotBlank)
                         }
 
-                        SelectField({ status }, { draft = copy(status = it) }) {
+                        SelectField(status, { draft = copy(status = it) }) {
                             label = "Status"
                             accepts(NotEmpty)
                             option(AdminUserStatus.ACTIVE, "active") { +"Active" }
@@ -137,7 +134,7 @@ class AdminUserEditorPage(ctx: Ctx<Props>) : FormComponent<AdminUserEditorPage.P
                     ui.fields {
                         Roles.forEach { role ->
                             CheckboxField(
-                                { roles.contains(role) },
+                                roles.contains(role),
                                 { draft = copy(roles = if (it) roles.plus(role) else roles.minus(role)) }
                             ) {
                                 label = role

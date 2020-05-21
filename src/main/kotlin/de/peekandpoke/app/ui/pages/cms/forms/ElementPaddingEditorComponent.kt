@@ -19,19 +19,15 @@ class ElementPaddingEditorComponent(ctx: Ctx<Props>) : Component<ElementPaddingE
         val onChange: (ElementPadding) -> Unit
     )
 
-    ////  STATE  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var draft by property(props.item) { props.onChange(it) }
-
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        draft.apply {
-            CheckboxField({ paddingTop }, { draft = copy(paddingTop = it) }) {
+        props.item.apply {
+            CheckboxField(paddingTop, { props.onChange(copy(paddingTop = it)) }) {
                 label = "Padding on top"
             }
 
-            CheckboxField({ paddingBottom }, { draft = copy(paddingBottom = it) }) {
+            CheckboxField(paddingBottom, { props.onChange(copy(paddingBottom = it)) }) {
                 label = "Padding on bottom"
             }
         }

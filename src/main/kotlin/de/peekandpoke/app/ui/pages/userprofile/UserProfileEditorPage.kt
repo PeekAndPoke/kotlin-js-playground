@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.classes
 
 @Suppress("FunctionName")
 fun Tag.UserProfileEditor() = comp { UserProfileEditorPage(it) }
@@ -84,7 +83,7 @@ class UserProfileEditorPage(ctx: NoProps) : FormComponent<Nothing?>(ctx) {
             ui.attached.segment {
                 ui.form {
                     ui.three.fields {
-                        TextField({ displayName }, { draft = copy(displayName = it) }) {
+                        TextField(displayName, { draft = copy(displayName = it) }) {
                             label = "Display Name"
                             accepts(NotBlank)
                         }
