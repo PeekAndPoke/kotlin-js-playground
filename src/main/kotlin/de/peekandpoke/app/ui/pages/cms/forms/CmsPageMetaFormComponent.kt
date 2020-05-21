@@ -102,7 +102,6 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
         }
     }
 
-
     private fun FlowContent.renderAlternateLanguage(index: Int, alternate: CmsPageModel.AlternateLanguage) {
 
         ui.column {

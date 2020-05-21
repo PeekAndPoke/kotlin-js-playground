@@ -1,14 +1,14 @@
 package de.peekandpoke.app.ui.pages.cms.layouts
 
-import de.peekandpoke.app.domain.cms.elements.TextElement
 import de.peekandpoke.app.domain.cms.layouts.LandingPageLayout
+import de.peekandpoke.app.ui.pages.cms.elements.CmsElementEditor
+import de.peekandpoke.app.utils.modifyAt
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.Tag
-import kotlinx.html.p
 
 @Suppress("FunctionName")
 fun Tag.LandingPageLayoutEditor(layout: LandingPageLayout, onChange: (LandingPageLayout) -> Unit) =
@@ -36,19 +36,11 @@ class LandingPageLayoutEditor(ctx: Ctx<Props>) : Component<LandingPageLayoutEdit
                 ui.header H3 { +"Landing Page Layout" }
             }
 
-            draft.elements.forEach {
-
-                ui.segment {
-                    ui.header H5 { +it.elementDescription }
-
-                    when (it) {
-                        is TextElement -> +"Text element"
-
-                        else ->
-                            ui.error.message {
-                                p { +"There is no editor available for '${it::class.simpleName}'" }
-                            }
-                    }
+            draft.elements.forEachIndexed { idx, element ->
+                CmsElementEditor(element) { modified ->
+                    draft = draft.copy(
+                        elements = draft.elements.modifyAt(idx) { modified }
+                    )
                 }
             }
         }

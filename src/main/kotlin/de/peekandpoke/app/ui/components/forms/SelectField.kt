@@ -56,6 +56,8 @@ class SelectField<T>(ctx: Ctx<Props<T>>) : Component<SelectField.Props<T>>(ctx) 
                 Option(realValue, formValue, content)
             )
         }
+
+        fun option(realValue: T, content: OPTION.() -> Unit) = option(realValue, realValue.toString(), content)
     }
 
     data class Option<T>(
