@@ -97,7 +97,7 @@ class CmsPageEditorPage(ctx: Ctx<Props>) : FormComponent<CmsPageEditorPage.Props
                     ui.header H1 {
                         css(Theme.Pages.whiteText)
                         icon.small.edit()
-                        +"Edit Cms Page '${original?.name}'"
+                        +"Edit Cms Page '${original?.name}' - ${original?.uri}"
 
                     }
                 }

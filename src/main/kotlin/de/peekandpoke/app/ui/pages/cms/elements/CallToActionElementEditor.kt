@@ -1,11 +1,10 @@
 package de.peekandpoke.app.ui.pages.cms.elements
 
+import de.peekandpoke.app.domain.cms.elements.CallToActionElement
 import de.peekandpoke.app.domain.cms.elements.CmsElement
-import de.peekandpoke.app.domain.cms.elements.TextElement
-import de.peekandpoke.app.ui.components.forms.TextAreaField
+import de.peekandpoke.app.ui.pages.cms.forms.CallToActionEditor
 import de.peekandpoke.app.ui.pages.cms.forms.ElementPaddingEditor
 import de.peekandpoke.app.ui.pages.cms.forms.ElementStyleEditor
-import de.peekandpoke.app.ui.pages.cms.forms.MarkdownEditor
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
@@ -15,17 +14,15 @@ import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 
 @Suppress("FunctionName")
-fun Tag.TextElementEditor(item: TextElement, onChange: (CmsElement) -> Unit) =
-    comp(TextElementEditor.Props(item, onChange)) { TextElementEditor(it) }
+fun Tag.CallToActionElementEditor(item: CallToActionElement, onChange: (CmsElement) -> Unit) =
+    comp(CallToActionElementEditor.Props(item, onChange)) { CallToActionElementEditor(it) }
 
-class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ctx) {
+class CallToActionElementEditor(ctx: Ctx<Props>) : Component<CallToActionElementEditor.Props>(ctx) {
 
     data class Props(
-        val item: TextElement,
+        val item: CallToActionElement,
         val onChange: (CmsElement) -> Unit
     )
-
-    ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
         ui.segment {
@@ -34,7 +31,7 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
             ui.form {
                 styles()
                 ui.divider {}
-                texts()
+                cta()
             }
         }
     }
@@ -48,14 +45,10 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
         }
     }
 
-    private fun FlowContent.texts() {
+    private fun FlowContent.cta() {
         props.item.apply {
-            ui.three.fields {
-                TextAreaField(headline, { props.onChange(copy(headline = it)) }) {
-                    label = "Headline"
-                }
-
-                MarkdownEditor("Text", text) { props.onChange(copy(text = it)) }
+            ui.five.fields {
+                CallToActionEditor(cta) { props.onChange(copy(cta = it)) }
             }
         }
     }

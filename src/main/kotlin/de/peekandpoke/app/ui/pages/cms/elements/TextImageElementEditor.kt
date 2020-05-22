@@ -1,10 +1,12 @@
 package de.peekandpoke.app.ui.pages.cms.elements
 
 import de.peekandpoke.app.domain.cms.elements.CmsElement
-import de.peekandpoke.app.domain.cms.elements.TextElement
+import de.peekandpoke.app.domain.cms.elements.TextImageElement
+import de.peekandpoke.app.ui.components.forms.SelectField
 import de.peekandpoke.app.ui.components.forms.TextAreaField
 import de.peekandpoke.app.ui.pages.cms.forms.ElementPaddingEditor
 import de.peekandpoke.app.ui.pages.cms.forms.ElementStyleEditor
+import de.peekandpoke.app.ui.pages.cms.forms.ImageListEditor
 import de.peekandpoke.app.ui.pages.cms.forms.MarkdownEditor
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
@@ -15,13 +17,13 @@ import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 
 @Suppress("FunctionName")
-fun Tag.TextElementEditor(item: TextElement, onChange: (CmsElement) -> Unit) =
-    comp(TextElementEditor.Props(item, onChange)) { TextElementEditor(it) }
+fun Tag.TextImageElementEditor(item: TextImageElement, onChange: (CmsElement) -> Unit) =
+    comp(TextImageElementEditor.Props(item, onChange)) { TextImageElementEditor(it) }
 
-class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ctx) {
+class TextImageElementEditor(ctx: Ctx<Props>) : Component<TextImageElementEditor.Props>(ctx) {
 
     data class Props(
-        val item: TextElement,
+        val item: TextImageElement,
         val onChange: (CmsElement) -> Unit
     )
 
@@ -35,15 +37,25 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
                 styles()
                 ui.divider {}
                 texts()
+                ui.divider {}
+                images()
             }
         }
     }
 
     private fun FlowContent.styles() {
         props.item.apply {
-            ui.four.fields {
+            ui.five.fields {
                 ElementStyleEditor(styling) { props.onChange(copy(styling = it)) }
                 ElementPaddingEditor(padding) { props.onChange(copy(padding = it)) }
+
+                SelectField(layout, { props.onChange(copy(layout = it)) }) {
+                    label = "Layout"
+                    option(TextImageElement.Layout.ImageBottom) { +"Image at bottom" }
+                    option(TextImageElement.Layout.ImageLeft) { +"Image at left" }
+                    option(TextImageElement.Layout.ImageRight) { +"Image at right" }
+                    option(TextImageElement.Layout.ImageTop) { +"Image at top" }
+                }
             }
         }
     }
@@ -56,6 +68,16 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
                 }
 
                 MarkdownEditor("Text", text) { props.onChange(copy(text = it)) }
+            }
+        }
+    }
+
+    private fun FlowContent.images() {
+        props.item.apply {
+            ui.header H5 { +"Images" }
+
+            ui.four.column.grid {
+                ImageListEditor(images) { props.onChange(copy(images = it)) }
             }
         }
     }

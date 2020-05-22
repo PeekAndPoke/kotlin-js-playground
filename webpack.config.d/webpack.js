@@ -2,7 +2,7 @@ const devServer = config.devServer
 
 // noinspection JSUnresolvedVariable
 if (devServer) {
-    devServer.hot = true
+    // devServer.hot = true
     devServer.port = 8888
     devServer.overlay = true
     devServer.watchOptions = {

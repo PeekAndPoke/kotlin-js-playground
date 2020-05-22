@@ -3,8 +3,6 @@ package de.peekandpoke.app.ui.pages.cms.forms
 import de.peekandpoke.app.domain.cms.Image
 import de.peekandpoke.app.ui.components.forms.ListField
 import de.peekandpoke.app.ui.components.forms.ListFieldComponent
-import de.peekandpoke.app.ui.components.forms.TextField
-import de.peekandpoke.app.ui.components.forms.validation.NotBlank
 import de.peekandpoke.kraft.components.Component
 import de.peekandpoke.kraft.components.Ctx
 import de.peekandpoke.kraft.components.comp
@@ -43,26 +41,20 @@ class ImageListEditorComponent(ctx: Ctx<Props>) : Component<ImageListEditorCompo
 
     private fun FlowContent.renderItem(ctx: ListFieldComponent.ItemContext<Image>) {
 
-        ctx.item.apply {
-            ui.column {
-                ui.top.attached.segment {
-                    TextField(url, { ctx.modify(copy(url = it)) }) {
-                        label = "Url"
-                        accepts(NotBlank)
-                    }
+        ui.column {
+            ui.top.attached.segment {
+                ImageEditor(ctx.item) { ctx.modify(it) }
 
-                    TextField(alt, { ctx.modify(copy(alt = it)) }) {
-                        label = "Alt"
-                    }
-
-                    if (url.isNotBlank()) {
-                        img { css { maxWidth = 100.pct };src = url }
+                if (ctx.item.url.isNotBlank()) {
+                    img {
+                        css { maxWidth = 100.pct }
+                        src = ctx.item.url
                     }
                 }
-                ui.bottom.attached.segment {
-                    ui.basic.fluid.buttons {
-                        leftRemoveRightButtons(ctx)
-                    }
+            }
+            ui.bottom.attached.segment {
+                ui.basic.fluid.buttons {
+                    leftRemoveRightButtons(ctx)
                 }
             }
         }
