@@ -39,7 +39,7 @@ class ImageListEditorComponent(ctx: Ctx<Props>) : Component<ImageListEditorCompo
         }
     }
 
-    private fun FlowContent.renderItem(ctx: ListFieldComponent.ItemContext<Image>) {
+    private fun FlowContent.renderItem(ctx: ListFieldComponent.ItemCtx<Image>) {
 
         ui.column {
             ui.top.attached.segment {
@@ -60,7 +60,7 @@ class ImageListEditorComponent(ctx: Ctx<Props>) : Component<ImageListEditorCompo
         }
     }
 
-    private fun FlowContent.renderAdd(ctx: ListFieldComponent.AddContext<Image>) {
+    private fun FlowContent.renderAdd(ctx: ListFieldComponent.AddCtx<Image>) {
 
         ui.column {
             ui.placeholder.raised.segment {

@@ -30,16 +30,12 @@ class TextImageElementEditor(ctx: Ctx<Props>) : Component<TextImageElementEditor
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        ui.segment {
-            ui.header H4 { +props.item.elementDescription }
-
-            ui.form {
-                styles()
-                ui.divider {}
-                texts()
-                ui.divider {}
-                images()
-            }
+        ui.form {
+            styles()
+            ui.divider {}
+            texts()
+            ui.divider {}
+            images()
         }
     }
 

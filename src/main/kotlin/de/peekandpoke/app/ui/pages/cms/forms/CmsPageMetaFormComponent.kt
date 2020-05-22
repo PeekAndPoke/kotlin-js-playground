@@ -13,7 +13,6 @@ import de.peekandpoke.ultrajs.semanticui.icon
 import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.FlowContent
 import kotlinx.html.Tag
-import kotlinx.html.div
 
 @Suppress("FunctionName")
 fun Tag.CmsPageMetaForm(meta: CmsPageModel.Meta, onChange: (CmsPageModel.Meta) -> Unit) =
@@ -37,16 +36,10 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
 
     override fun VDom.render() {
 
-        div {
-            // TODO: fix this by using a ListField for the alternateLanguages
-//            attributes["key"] = draft.hashCode().toString()
-
-            ui.header H3 { +"Meta data" }
-
-            ui.form {
-                basics()
-                alternateLanguages()
-            }
+        ui.form {
+            basics()
+            ui.divider {}
+            alternateLanguages()
         }
     }
 
@@ -101,7 +94,7 @@ class CmsPageMetaFormComponent(ctx: Ctx<Props>) : Component<CmsPageMetaFormCompo
     }
 
     private fun FlowContent.renderAlternateLanguage(
-        ctx: ListFieldComponent.ItemContext<CmsPageModel.AlternateLanguage>
+        ctx: ListFieldComponent.ItemCtx<CmsPageModel.AlternateLanguage>
     ) {
 
         ctx.item.apply {

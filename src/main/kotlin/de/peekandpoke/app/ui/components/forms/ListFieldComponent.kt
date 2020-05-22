@@ -24,29 +24,29 @@ class ListFieldComponent<T>(ctx: Ctx<Props<T>>) : Component<ListFieldComponent.P
     data class Props<T>(
         val items: List<T>,
         val onChange: (List<T>) -> Unit,
-        val renderItem: FlowContent.(ItemContext<T>) -> Unit,
-        val renderAdd: FlowContent.(AddContext<T>) -> Unit
+        val renderItem: FlowContent.(ItemCtx<T>) -> Unit,
+        val renderAdd: FlowContent.(AddCtx<T>) -> Unit
     )
 
     class PropsBuilder<T>(
         val items: List<T>,
         val onChange: (List<T>) -> Unit
     ) {
-        private var renderItem: FlowContent.(ItemContext<T>) -> Unit = {}
-        private var renderAdd: FlowContent.(AddContext<T>) -> Unit = {}
+        private var renderItem: FlowContent.(ItemCtx<T>) -> Unit = {}
+        private var renderAdd: FlowContent.(AddCtx<T>) -> Unit = {}
 
         fun build() = Props(items, onChange, renderItem, renderAdd)
 
-        fun renderItem(block: FlowContent.(ItemContext<T>) -> Unit) {
+        fun renderItem(block: FlowContent.(ItemCtx<T>) -> Unit) {
             renderItem = block
         }
 
-        fun renderAdd(block: FlowContent.(AddContext<T>) -> Unit) {
+        fun renderAdd(block: FlowContent.(AddCtx<T>) -> Unit) {
             renderAdd = block
         }
     }
 
-    data class ItemContext<T>(
+    data class ItemCtx<T>(
         val idx: Int,
         val item: T,
         val all: List<T>,
@@ -55,7 +55,7 @@ class ListFieldComponent<T>(ctx: Ctx<Props<T>>) : Component<ListFieldComponent.P
         val remove: () -> Unit
     )
 
-    data class AddContext<T>(
+    data class AddCtx<T>(
         val add: (T) -> Unit
     )
 
@@ -66,7 +66,7 @@ class ListFieldComponent<T>(ctx: Ctx<Props<T>>) : Component<ListFieldComponent.P
         props.apply {
 
             items.forEachIndexed { idx, item ->
-                val ctx = ItemContext(
+                val ctx = ItemCtx(
                     idx = idx,
                     item = item,
                     all = props.items,
@@ -78,7 +78,7 @@ class ListFieldComponent<T>(ctx: Ctx<Props<T>>) : Component<ListFieldComponent.P
                 props.renderItem(this@render, ctx)
             }
 
-            val ctx = AddContext { new: T -> onChange(items.plus(new)) }
+            val ctx = AddCtx { new: T -> onChange(items.plus(new)) }
 
             props.renderAdd(this@render, ctx)
         }

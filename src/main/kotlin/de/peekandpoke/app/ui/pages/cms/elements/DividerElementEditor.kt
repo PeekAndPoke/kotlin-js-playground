@@ -25,12 +25,8 @@ class DividerElementEditor(ctx: Ctx<Props>) : Component<DividerElementEditor.Pro
     )
 
     override fun VDom.render() {
-        ui.segment {
-            ui.header H4 { +props.item.elementDescription }
-
-            ui.form {
-                settings()
-            }
+        ui.form {
+            settings()
         }
     }
 

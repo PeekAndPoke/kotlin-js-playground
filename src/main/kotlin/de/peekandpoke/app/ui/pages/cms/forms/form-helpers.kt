@@ -7,7 +7,7 @@ import de.peekandpoke.ultrajs.semanticui.ui
 import kotlinx.html.FlowContent
 import kotlinx.html.title
 
-fun <T> FlowContent.leftRemoveRightButtons(ctx: ListFieldComponent.ItemContext<T>) {
+fun <T> FlowContent.leftRemoveRightButtons(ctx: ListFieldComponent.ItemCtx<T>) {
 
     if (ctx.idx > 0) {
         ui.icon.button {

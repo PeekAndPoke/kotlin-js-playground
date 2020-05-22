@@ -49,7 +49,6 @@ class MenuItemComponent(ctx: Ctx<Props>) : Component<MenuItemComponent.Props>(ct
                     style = "max-height: 0; transition: max-height 0.2s ease-out; overflow: hidden;"
                 }
 
-
                 props.items.forEach {
                     it()
                 }

@@ -4,6 +4,7 @@ import de.peekandpoke.app.Api
 import de.peekandpoke.app.domain.cms.CmsPageModel
 import de.peekandpoke.app.domain.cms.layouts.LandingPageLayout
 import de.peekandpoke.app.ui.Theme
+import de.peekandpoke.app.ui.components.Collapsable
 import de.peekandpoke.app.ui.components.forms.FormComponent
 import de.peekandpoke.app.ui.components.forms.TextField
 import de.peekandpoke.app.ui.components.forms.validation.NotBlank
@@ -56,16 +57,12 @@ class CmsPageEditorPage(ctx: Ctx<Props>) : FormComponent<CmsPageEditorPage.Props
 
         ui.basic.segment {
             basicInfo()
-        }
-
-        ui.basic.segment {
             meta()
         }
 
         draft?.apply {
             when (layout) {
-                is LandingPageLayout ->
-                    LandingPageLayoutEditor(layout) { draft = copy(layout = it) }
+                is LandingPageLayout -> LandingPageLayoutEditor(layout) { draft = copy(layout = it) }
 
                 else ->
                     ui.error.message {
@@ -140,7 +137,18 @@ class CmsPageEditorPage(ctx: Ctx<Props>) : FormComponent<CmsPageEditorPage.Props
 
         draft?.apply {
             ui.segment {
-                CmsPageMetaForm(meta) { draft = copy(meta = it) }
+                Collapsable {
+                    header { ctx ->
+                        ui.header H3 {
+                            +"Meta data"
+                            onClick { ctx.toggle() }
+                        }
+                    }
+                    content {
+                        ui.divider {}
+                        CmsPageMetaForm(meta) { draft = copy(meta = it) }
+                    }
+                }
             }
         }
     }

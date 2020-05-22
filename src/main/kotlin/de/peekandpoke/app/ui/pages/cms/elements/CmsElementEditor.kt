@@ -1,11 +1,11 @@
 package de.peekandpoke.app.ui.pages.cms.elements
 
 import de.peekandpoke.app.domain.cms.elements.*
-import de.peekandpoke.kraft.components.Component
-import de.peekandpoke.kraft.components.Ctx
-import de.peekandpoke.kraft.components.comp
+import de.peekandpoke.app.ui.components.Collapsable
+import de.peekandpoke.kraft.components.*
 import de.peekandpoke.kraft.vdom.VDom
 import de.peekandpoke.ultrajs.semanticui.ui
+import kotlinx.html.FlowContent
 import kotlinx.html.Tag
 import kotlinx.html.p
 
@@ -23,21 +23,22 @@ class CmsElementEditor(ctx: Ctx<Props>) : Component<CmsElementEditor.Props>(ctx)
     override fun VDom.render() {
 
         props.apply {
+
             when (item) {
-                is CallToActionElement -> CallToActionElementEditor(item, props.onChange)
-                is DividerElement -> DividerElementEditor(item, props.onChange)
-                // TODO: FactsAndFiguresElement
+                is CallToActionElement -> show { CallToActionElementEditor(item, props.onChange) }
+                is DividerElement -> show { DividerElementEditor(item, props.onChange) }
+                is FactsAndFiguresElement -> show { FactsAndFiguresElementEditor(item, props.onChange) }
                 // TODO: FooterElement
-                is GalleryElement -> GalleryElementEditor(item, props.onChange)
+                is GalleryElement -> show { GalleryElementEditor(item, props.onChange) }
                 // TODO: HeaderElement
-                is HeroElement -> HeroElementEditor(item, props.onChange)
+                is HeroElement -> show { HeroElementEditor(item, props.onChange) }
                 // TODO: ListAndImagesElement
                 // TODO: ListElement
                 // TODO: ListWithCtasElement
                 // TODO: PartnerContactFormElement
                 // TODO: SnippetElement
-                is TextElement -> TextElementEditor(item, props.onChange)
-                is TextImageElement -> TextImageElementEditor(item, props.onChange)
+                is TextElement -> show { TextElementEditor(item, props.onChange) }
+                is TextImageElement -> show { TextImageElementEditor(item, props.onChange) }
 
                 else ->
                     ui.segment {
@@ -46,6 +47,23 @@ class CmsElementEditor(ctx: Ctx<Props>) : Component<CmsElementEditor.Props>(ctx)
                             p { +"There is no editor available for '${item::class.simpleName}'" }
                         }
                     }
+            }
+        }
+    }
+
+    private fun FlowContent.show(fn: RenderFn) {
+        ui.segment {
+            Collapsable {
+                header { ctx ->
+                    ui.header H4 {
+                        +props.item.elementDescription
+                        onClick { ctx.toggle() }
+                    }
+                }
+                content {
+                    ui.divider {}
+                    fn()
+                }
             }
         }
     }

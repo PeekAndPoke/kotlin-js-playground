@@ -27,19 +27,12 @@ class HeroElementEditor(ctx: Ctx<Props>) : Component<HeroElementEditor.Props>(ct
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-
-        props.item.apply {
-            ui.segment {
-                ui.header H4 { +props.item.elementDescription }
-
-                ui.form {
-                    basics()
-                    ui.divider {}
-                    cta()
-                    ui.divider {}
-                    images()
-                }
-            }
+        ui.form {
+            basics()
+            ui.divider {}
+            cta()
+            ui.divider {}
+            images()
         }
     }
 

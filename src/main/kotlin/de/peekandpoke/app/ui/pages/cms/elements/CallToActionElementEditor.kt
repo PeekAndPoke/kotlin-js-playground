@@ -25,14 +25,10 @@ class CallToActionElementEditor(ctx: Ctx<Props>) : Component<CallToActionElement
     )
 
     override fun VDom.render() {
-        ui.segment {
-            ui.header H4 { +props.item.elementDescription }
-
-            ui.form {
-                styles()
-                ui.divider {}
-                cta()
-            }
+        ui.form {
+            styles()
+            ui.divider {}
+            cta()
         }
     }
 

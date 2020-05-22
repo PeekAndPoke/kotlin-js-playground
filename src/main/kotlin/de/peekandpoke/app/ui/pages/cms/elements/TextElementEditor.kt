@@ -28,16 +28,13 @@ class TextElementEditor(ctx: Ctx<Props>) : Component<TextElementEditor.Props>(ct
     ////  IMPL  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun VDom.render() {
-        ui.segment {
-            ui.header H4 { +props.item.elementDescription }
-
-            ui.form {
-                styles()
-                ui.divider {}
-                texts()
-            }
+        ui.form {
+            styles()
+            ui.divider {}
+            texts()
         }
     }
+
 
     private fun FlowContent.styles() {
         props.item.apply {
